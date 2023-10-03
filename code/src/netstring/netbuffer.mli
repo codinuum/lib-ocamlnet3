@@ -129,7 +129,7 @@ val add_inplace : ?len:int -> t -> (Bytes.t -> int -> int -> int) -> int
      * the actual number of added bytes; this number is also returned by
      * [add_inplace].
      *
-     * Example: let n = add_inplace nb (Pervasives.input ch)
+     * Example: let n = add_inplace nb (Stdlib.input ch)
      *
      * The argument [len] is the number of bytes to add (second argument of
      * [f]). It defaults to the number of free bytes in the buffer after space

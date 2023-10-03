@@ -83,7 +83,7 @@ sum_up ch
 ]}
 The class {!Netchannels.input_channel} is an implementation of the type
 [in_obj_channel] where every method of the class simply calls the
-corresponding function of the module [Pervasives]. (By the way, it would
+corresponding function of the module [Stdlib]. (By the way, it would
 be a good idea to close the channel afterwards: [ch#close_in()].
 We will discuss that below.)
 

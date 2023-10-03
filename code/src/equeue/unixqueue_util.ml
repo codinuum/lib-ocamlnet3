@@ -179,7 +179,7 @@ let string_of_event ev =
 let fd_cmp =
   match Sys.os_type with
     | "Win32" ->
-	Pervasives.compare
+	Stdlib.compare
     | _ ->
 	(fun (fd1:Unix.file_descr) fd2 ->
 	   (Obj.magic fd1 : int) - (Obj.magic fd2 : int)

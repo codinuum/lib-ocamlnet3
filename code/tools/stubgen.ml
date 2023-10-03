@@ -503,10 +503,10 @@ let ml_name_of_enum n0 =
   try
     let l = String.length n in
     let p = String.index n '|' in
-    String.capitalize (String.lowercase (String.sub n (p+1) (l-p-1)))
+    String.capitalize_ascii (String.lowercase_ascii (String.sub n (p+1) (l-p-1)))
   with
     | Not_found ->
-         String.capitalize (String.lowercase n)
+         String.capitalize_ascii (String.lowercase_ascii n)
 
 
 let is_opt_case n =

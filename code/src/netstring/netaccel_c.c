@@ -25,7 +25,7 @@ value netstring_int_blit_ml (value src, value srcpos,
 	srcpos_c+len_c > Wosize_val(src) ||
 	destpos_c < 0 ||
 	destpos_c+len_c > Wosize_val(dest))
-	invalid_argument("Netaccel.int_blit");
+	caml_invalid_argument("Netaccel.int_blit");
     
     if (src != dest || destpos_c <= srcpos_c) {
 	for (i=0; i<len_c; i++) {
@@ -59,7 +59,7 @@ value netstring_int_series_ml (value src, value srcpos,
 	srcpos_c+len_c > Wosize_val(src) ||
 	destpos_c < 0 ||
 	destpos_c+len_c > Wosize_val(dest))
-	invalid_argument("Netaccel.int_series");
+	caml_invalid_argument("Netaccel.int_series");
 
     s = n_c;
     for (i=0; i<len_c; i++) {
@@ -99,9 +99,9 @@ value netstring_read_iso88591_ml (value maxcode, value enc,
     slice_char_len = Wosize_val(slice_char);
 
     if (slice_char_len != Wosize_val(slice_blen)) 
-	invalid_argument("Netaccel.read_iso88591");
-    if (p_in_c < 0 || l_in_c < 0 || p_in_c + l_in_c > string_length(s_in)) 
-	invalid_argument("Netaccel.read_iso88591");
+	caml_invalid_argument("Netaccel.read_iso88591");
+    if (p_in_c < 0 || l_in_c < 0 || p_in_c + l_in_c > caml_string_length(s_in)) 
+	caml_invalid_argument("Netaccel.read_iso88591");
 
     m = l_in_c;
     if (slice_char_len < m) m = slice_char_len;
@@ -110,11 +110,11 @@ value netstring_read_iso88591_ml (value maxcode, value enc,
 	ch = Byte_u(s_in, p_in_c+k);
 	if (ch > maxcode_c) {
 	    Field(slice_char, k) = Val_long(-1);
-	    r = alloc_tuple(3);
+	    r = caml_alloc_tuple(3);
 	    Store_field(r, 0, Val_long(k));
 	    Store_field(r, 1, Val_long(k));
 	    Store_field(r, 2, enc);
-	    raise_with_arg(*caml_named_value("Netconversion.Malformed_code_read"),
+	    caml_raise_with_arg(*caml_named_value("Netconversion.Malformed_code_read"),
 			   r);
 	};
 	Field(slice_char, k) = Val_int((signed int) ch);
@@ -124,7 +124,7 @@ value netstring_read_iso88591_ml (value maxcode, value enc,
 	Field(slice_char, m) = Val_long(-1);
     };
 
-    r = alloc_tuple(3);
+    r = caml_alloc_tuple(3);
     Store_field(r, 0, Val_long(m));
     Store_field(r, 1, Val_long(m));
     Store_field(r, 2, enc);
@@ -164,9 +164,9 @@ value netstring_read_utf8_ml (value is_java,
     slice_char_len = Wosize_val(slice_char);
 
     if (slice_char_len != Wosize_val(slice_blen)) 
-	invalid_argument("Netaccel.read_utf8");
-    if (p_in_c < 0 || l_in_c < 0 || p_in_c + l_in_c > string_length(s_in)) 
-	invalid_argument("Netaccel.read_utf8");
+	caml_invalid_argument("Netaccel.read_utf8");
+    if (p_in_c < 0 || l_in_c < 0 || p_in_c + l_in_c > caml_string_length(s_in)) 
+	caml_invalid_argument("Netaccel.read_utf8");
 
     p = p_in_c;
     p_max = p_in_c + l_in_c;
@@ -249,20 +249,20 @@ value netstring_read_utf8_ml (value is_java,
 	Field(slice_char, n_ret) = Val_long(-1);
     }
 
-    r = alloc_tuple(3);
+    r = caml_alloc_tuple(3);
     Store_field(r, 0, Val_long(n_ret));
     Store_field(r, 1, Val_long(p-p_in_c));
-    Store_field(r, 2, hash_variant("Enc_utf8"));
+    Store_field(r, 2, caml_hash_variant("Enc_utf8"));
 
     CAMLreturn(r);
 
  malformed_code:
     Field(slice_char, n) = Val_long(-1);
-    r = alloc_tuple(3);
+    r = caml_alloc_tuple(3);
     Store_field(r, 0, Val_long(n));
     Store_field(r, 1, Val_long(p-p_in_c));
-    Store_field(r, 2, hash_variant("Enc_utf8"));
-    raise_with_arg(*caml_named_value("Netconversion.Malformed_code_read"),
+    Store_field(r, 2, caml_hash_variant("Enc_utf8"));
+    caml_raise_with_arg(*caml_named_value("Netconversion.Malformed_code_read"),
 		   r);
 
     /* Cannot reach this point! */

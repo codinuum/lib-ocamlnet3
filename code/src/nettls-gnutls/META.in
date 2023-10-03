@@ -1,5 +1,5 @@
 description = "Ocamlnet - GnuTLS bindings"
-requires = "unix,bigarray,netsys,netstring"
+requires = "unix,netsys,netstring"
 version = "@VERSION@"
 archive(byte) = "nettls-gnutls.cma"
 archive(native) = "nettls-gnutls.cmxa"

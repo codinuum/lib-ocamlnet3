@@ -4,7 +4,7 @@ open Printf
 
 module StrMap = Map.Make(String)
 module StrSet = Set.Make(String)
-module OID = struct type t = Netoid.t let compare = Pervasives.compare end
+module OID = struct type t = Netoid.t let compare = Stdlib.compare end
 module OIDMap = Map.Make(OID)
 
 module type GNUTLS_PROVIDER =

@@ -121,7 +121,7 @@ module IntSet =
   Set.Make
     (struct
        type t = int
-       let compare (x:t) (y:t) = Pervasives.compare x y
+       let compare (x:t) (y:t) = Stdlib.compare x y
      end
     )
 

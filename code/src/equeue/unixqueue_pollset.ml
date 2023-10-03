@@ -16,7 +16,7 @@ open Printf
 
 module Float = struct
   type t = float
-(*  let compare = ( Pervasives.compare : float -> float -> int ) *)
+(*  let compare = ( Stdlib.compare : float -> float -> int ) *)
   let compare (x:float) y =
     if x < y then (-1) else if x = y then 0 else 1
       (* does not work for non-normal numbers but we don't care *)

@@ -107,7 +107,7 @@ end
 module Uint4 = struct
   type t = uint4
   let compare (a:uint4) (b:uint4) =
-    (* avoid calling Pervasives.compare *)
+    (* avoid calling Stdlib.compare *)
     let a' = logical_int32_of_uint4 a in
     let b' = logical_int32_of_uint4 b in
     if a' = b' then

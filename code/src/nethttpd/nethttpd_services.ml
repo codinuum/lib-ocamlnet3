@@ -107,10 +107,10 @@ object(self)
       try
 	let req_name = env # input_header_field "Host" in
 	let (req_host, req_port_opt) = split_host_port req_name in
-	let req_host = String.lowercase req_host in
+	let req_host = String.lowercase_ascii req_host in
 	let req_port = match req_port_opt with Some p -> p | None -> 80 in  (* CHECK *)
 	List.find
-	  (fun (n,p) -> (n = "*" || String.lowercase n = req_host) && 
+	  (fun (n,p) -> (n = "*" || String.lowercase_ascii n = req_host) && 
 	                (p = 0 || p = req_port))
 	  host.server_names
       with

@@ -71,7 +71,7 @@ module CI : sig  (* case-insensitive strings *)
 end = struct
   type t = string
   let compare (a_ci:t) (b_ci:t) =
-    Pervasives.compare a_ci b_ci
+    Stdlib.compare a_ci b_ci
   let make s = STRING_LOWERCASE s
 end
 

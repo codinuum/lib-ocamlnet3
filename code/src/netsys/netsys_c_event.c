@@ -224,7 +224,7 @@ CAMLprim value netsys_create_not_event(value allow_user_add)
 #endif
     return r;
 #else
-    invalid_argument("Netsys_posix.create_event not available");
+    caml_invalid_argument("Netsys_posix.create_event not available");
 #endif
 }
 
@@ -268,7 +268,7 @@ CAMLprim value netsys_set_nonblock_not_event(value nev)
     ne = *(Not_event_val(nev));
 
     if (ne->fd1 == -1) 
-	failwith("Netsys_posix.set_nonblock_event: already destroyed");
+	caml_failwith("Netsys_posix.set_nonblock_event: already destroyed");
     
     x = fcntl(ne->fd1, F_GETFL, 0);
     if (x == -1) uerror("fcntl", Nothing);
@@ -278,7 +278,7 @@ CAMLprim value netsys_set_nonblock_not_event(value nev)
 
     return Val_unit;
 #else
-    invalid_argument("Netsys_posix.set_nonblock_event not available");
+    caml_invalid_argument("Netsys_posix.set_nonblock_event not available");
 #endif
 }
 
@@ -290,10 +290,10 @@ CAMLprim value netsys_get_not_event_fd_nodup(value nev)
     int fd, code;
     ne = *(Not_event_val(nev));
     if (ne->fd1 == -1) 
-	failwith("Netsys_posix.get_event_fd_nodup: already destroyed");
+	caml_failwith("Netsys_posix.get_event_fd_nodup: already destroyed");
     return Val_int(ne->fd1);
 #else
-    invalid_argument("Netsys_posix.get_event_fd not available");
+    caml_invalid_argument("Netsys_posix.get_event_fd not available");
 #endif
 }
 
@@ -306,11 +306,11 @@ int netsys_return_not_event_fd(value nev)
     int fd;
     ne = *(Not_event_val(nev));
     if (ne->fd1 == -1) 
-	failwith("Netsys_posix.get_event_fd: already destroyed");
+	caml_failwith("Netsys_posix.get_event_fd: already destroyed");
     fd = ne->fd1;
     return fd;
 #else
-    invalid_argument("Netsys_posix.get_event_fd not available");
+    caml_invalid_argument("Netsys_posix.get_event_fd not available");
 #endif
 }
 
@@ -350,15 +350,15 @@ CAMLprim value netsys_set_not_event(value nev)
     CAMLparam1(nev);
     ne = *(Not_event_val(nev));
     if (ne->fd1 == -1) 
-	failwith("Netsys_posix.set_event: already destroyed");
+	caml_failwith("Netsys_posix.set_event: already destroyed");
     if (!ne->allow_user_add)
-	failwith("Netsys_posix.set_event: not allowed for this type of event");
+	caml_failwith("Netsys_posix.set_event: not allowed for this type of event");
     caml_enter_blocking_section();
     netsys_not_event_signal(ne);
     caml_leave_blocking_section();
     CAMLreturn(Val_unit);
 #else
-    invalid_argument("Netsys_posix.set_event not available");
+    caml_invalid_argument("Netsys_posix.set_event not available");
 #endif
 }
 
@@ -373,7 +373,7 @@ CAMLprim value netsys_wait_not_event(value nev)
     ne = *(Not_event_val(nev));
     
     if (ne->fd1 == -1) 
-	failwith("Netsys_posix.wait_event: already destroyed");
+	caml_failwith("Netsys_posix.wait_event: already destroyed");
 
     caml_enter_blocking_section();
     p.fd = ne->fd1;
@@ -386,7 +386,7 @@ CAMLprim value netsys_wait_not_event(value nev)
     if (code == -1) unix_error(e, "poll", Nothing);
     CAMLreturn(Val_unit);
 #else
-    invalid_argument("Netsys_posix.wait_event not available");
+    caml_invalid_argument("Netsys_posix.wait_event not available");
 #endif
 }
 
@@ -402,7 +402,7 @@ CAMLprim value netsys_consume_not_event(value nev)
     ne = *(Not_event_val(nev));
     
     if (ne->fd1 == -1) 
-	failwith("Netsys_posix.consume_event: already destroyed");
+	caml_failwith("Netsys_posix.consume_event: already destroyed");
 
     caml_enter_blocking_section();
 
@@ -436,6 +436,6 @@ CAMLprim value netsys_consume_not_event(value nev)
 
     CAMLreturn(Val_unit);
 #else
-    invalid_argument("Netsys_posix.wait_event not available");
+    caml_invalid_argument("Netsys_posix.wait_event not available");
 #endif
 }

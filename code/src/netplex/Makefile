@@ -26,6 +26,8 @@ OCAMLOPT_OPTIONS += $(STRING_OPTS)
 
 PP_OPTIONS = -pp "$(CPPO) $(PP_BYTES) $(PP_DEPRECATED)"
 
+REQUIRES += camlp-streams
+
 INCLUDES += $(INC_EQUEUE) $(INC_RPC) $(INC_NETSTRING) $(INC_NETSYS)
 
 ALL_EXTRA = netplex-admin$(EXEC_SUFFIX) netplex-packlist 
@@ -36,7 +38,7 @@ include $(TOP_DIR)/Makefile.rules
 
 netplex-admin$(EXEC_SUFFIX): netplex.cma netplex_admin.cmo
 	$(OCAMLC) -o netplex-admin -custom \
-	        -package "bytes unix bigarray str" -linkpkg \
+	        -package "bytes unix str" -linkpkg \
 		netsys_oothr.cma netsys.cma netstring.cma equeue.cma \
 		rpc.cma netplex.cma netplex_admin.cmo
 

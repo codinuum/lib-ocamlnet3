@@ -337,9 +337,9 @@ let do_poll a k tmo =
 	let a_inp = Array.of_list o_inp in
 	let a_out = Array.of_list o_out in
 	let a_pri = Array.of_list o_pri in
-	Array.sort Pervasives.compare a_inp;
-	Array.sort Pervasives.compare a_out;
-	Array.sort Pervasives.compare a_pri;
+	Array.sort Stdlib.compare a_inp;
+	Array.sort Stdlib.compare a_out;
+	Array.sort Stdlib.compare a_pri;
 	let n = ref 0 in
 	for j = 0 to k-1 do
 	  let c = e.(j) in
@@ -679,7 +679,7 @@ end
 
 module PFH = struct
   type t = post_fork_handler
-  let compare = Pervasives.compare
+  let compare = Stdlib.compare
 end
 
 module PFH_Set = Set.Make(PFH)

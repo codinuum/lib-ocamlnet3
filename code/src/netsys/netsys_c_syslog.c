@@ -86,7 +86,7 @@ CAMLprim value netsys_openlog(value ident,
     id=NULL;
     if (Is_block(ident)) {
 	if (ident_buf == NULL) {
-	    ident_buf = stat_alloc(IDENT_BUF_LEN);
+	    ident_buf = caml_stat_alloc(IDENT_BUF_LEN);
 	};
 	strncpy(ident_buf, 
 		String_val(Field(ident, 0)),
@@ -94,12 +94,12 @@ CAMLprim value netsys_openlog(value ident,
 	ident_buf[IDENT_BUF_LEN-1] = 0;
 	id=ident_buf;
     };
-    options = convert_flag_list(opts, syslog_opt_flags);
+    options = caml_convert_flag_list(opts, syslog_opt_flags);
     facility = syslog_fac_flags[Int_val(fac)];
     openlog(id, options, facility);
     return Val_unit;
 #else
-    invalid_argument("Netsys_posix.openlog not available");
+    caml_invalid_argument("Netsys_posix.openlog not available");
 #endif
 }
 
@@ -114,7 +114,7 @@ CAMLprim value netsys_syslog(value fac, value lev, value msg)
     syslog(facility | level, "%s", String_val(msg));
     return Val_unit;
 #else
-    invalid_argument("Netsys_posix.syslog not available");
+    caml_invalid_argument("Netsys_posix.syslog not available");
 #endif
 }
 
@@ -125,7 +125,7 @@ CAMLprim value netsys_closelog(value dummy)
     closelog();
     return Val_unit;
 #else
-    invalid_argument("Netsys_posix.closelog not available");
+    caml_invalid_argument("Netsys_posix.closelog not available");
 #endif
 }
 

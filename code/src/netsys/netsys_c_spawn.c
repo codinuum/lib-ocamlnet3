@@ -477,7 +477,7 @@ main_exit:
 
     return return_value;
 #else
-     invalid_argument("netsys_spawn");
+     caml_invalid_argument("netsys_spawn");
 #endif
 }
 
@@ -614,7 +614,7 @@ CAMLprim value netsys_posix_spawn_nat(value v_pg,
 	    flags |= POSIX_SPAWN_SETPGROUP;
 	    break;
 	case 2: /* Pg_new_fg_group */
-	    invalid_argument
+	    caml_invalid_argument
 		("Netsys_posix.posix_spawn: Pg_new_fg_group not supported");
 	    break;
 	default:
@@ -638,7 +638,7 @@ CAMLprim value netsys_posix_spawn_nat(value v_pg,
 	    flags |= POSIX_SPAWN_SETSIGDEF;
 	    break;
 	case 1: /* Sig_ignore */
-	    invalid_argument
+	    caml_invalid_argument
 		("Netsys_posix.posix_spawn: Sig_ignore not supported");
 	    break;
 	case 2: /* Sig_mask */
@@ -803,12 +803,12 @@ main_exit:
 	unix_error(uerror_errno, uerror_function, Nothing);
 
     if (use_fork_exec != 0)
-	failwith("USE_FORK_EXEC");
+	caml_failwith("USE_FORK_EXEC");
 
     return return_value;
 
 #else
-     invalid_argument("netsys_posix_spawn not available");
+     caml_invalid_argument("netsys_posix_spawn not available");
 #endif
 }
 

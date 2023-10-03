@@ -10,6 +10,8 @@ DOBJECTS = shell_sys.mli shell.mli shell_uq.mli shell_fs.mli \
 OCAMLC_OPTIONS += $(STRING_OPTS)
 OCAMLOPT_OPTIONS += $(STRING_OPTS)
 
+REQUIRES += camlp-streams
+
 PP_OPTIONS = -pp "$(CPPO) $(PP_BYTES) $(PP_DEPRECATED)"
 
 INCLUDES += $(INC_EQUEUE) $(INC_NETSYS) $(INC_NETSTRING)

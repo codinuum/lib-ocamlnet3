@@ -119,7 +119,7 @@ end
 
 module ContId = struct
   type t = container_id
-  let (compare : t -> t -> int) = Pervasives.compare
+  let (compare : t -> t -> int) = Stdlib.compare
 end
 
 

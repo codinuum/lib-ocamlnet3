@@ -89,7 +89,7 @@ end
 
 module PTYPE = struct
   type t = parallelization_type
-  let compare (x:t) (y:t) = Pervasives.compare x y
+  let compare (x:t) (y:t) = Stdlib.compare x y
 end
 
 module PSet = Set.Make(PTYPE)

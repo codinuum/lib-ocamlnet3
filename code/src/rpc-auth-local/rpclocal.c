@@ -101,7 +101,7 @@ value netsys_get_peer_credentials(value fd) {
 #endif
 
     /* Allocate a pair, and put the result into it: */
-    result = alloc_tuple(2);
+    result = caml_alloc_tuple(2);
     Store_field(result, 0, Val_int(uid));
     Store_field(result, 1, Val_int(gid));
 
@@ -246,7 +246,7 @@ value netsys_peek_peer_credentials(value fd) {
 #endif
 
     /* Allocate a pair, and put the result into it: */
-    result = alloc_tuple(2);
+    result = caml_alloc_tuple(2);
     Store_field(result, 0, Val_int(uid));
     Store_field(result, 1, Val_int(gid));
 

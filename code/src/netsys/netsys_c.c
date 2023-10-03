@@ -12,13 +12,13 @@ CAMLprim value netsys_int64_of_file_descr(value fd) {
 #ifdef _WIN32
     switch (Descr_kind_val(fd)) {
     case KIND_HANDLE:
-	return copy_int64((intnat) (Handle_val(fd)));
+	return caml_copy_int64((intnat) (Handle_val(fd)));
     case KIND_SOCKET:
-	return copy_int64((intnat) (Socket_val(fd)));
+	return caml_copy_int64((intnat) (Socket_val(fd)));
     }
-    return copy_int64(0);
+    return caml_copy_int64(0);
 #else
-    return copy_int64(Long_val(fd));
+    return caml_copy_int64(Long_val(fd));
 #endif
 }
 
@@ -137,7 +137,7 @@ CAMLprim value netsys_ctermid (value unit) {
 #ifdef HAVE_POSIX_TTY
     char *s;
     s = NULL;
-    return copy_string(ctermid(s));
+    return caml_copy_string(ctermid(s));
     /* ctermid is always successful; however it can return an empty string */
 #else
     invalid_argument("Netsys.ctermid not available");
@@ -151,7 +151,7 @@ CAMLprim value netsys_ttyname (value fd) {
 
     s = ttyname(Int_val(fd));
     if ( s == NULL ) uerror("ttyname", Nothing);
-    return copy_string(s);
+    return caml_copy_string(s);
 #else
     invalid_argument("Netsys.ttyname not available");
 #endif
@@ -260,7 +260,7 @@ CAMLprim value netsys_fdopendir(value fd)
   value res;
   d = fdopendir(Int_val(fd));
   if (d == (DIR *) NULL) uerror("fdopendir", Nothing);
-  res = alloc_small(1, Abstract_tag);
+  res = caml_alloc_small(1, Abstract_tag);
   DIR_Val(res) = d;
   return res;
 #else
@@ -281,7 +281,7 @@ CAMLprim value netsys_realpath (value name)    /* POSIX.1-2001 */
 	uerror("realpath", Nothing);
     }
     else {
-	name_out = copy_string(name_out_s);
+	name_out = caml_copy_string(name_out_s);
 	free(name_out_s);
     }
     return name_out;
@@ -324,7 +324,7 @@ CAMLprim value netsys_ptsname (value fd)    /* POSIX.1-2001 */
 
     s = ptsname(Int_val(fd));
     if ( s == NULL ) uerror("ptsname", Nothing);
-    return copy_string(s);
+    return caml_copy_string(s);
 #else
     invalid_argument("Netsys_posix.ptsname not available");
 #endif
@@ -473,8 +473,8 @@ CAMLprim value netsys_openat(value dirfd, value path, value flags, value perm)
     char * p;
 
     /* shamelessly copied from ocaml distro */
-    cv_flags = convert_flag_list(flags, open_flag_table);
-    clo_flags = convert_flag_list(flags, open_cloexec_table);
+    cv_flags = caml_convert_flag_list(flags, open_flag_table);
+    clo_flags = caml_convert_flag_list(flags, open_cloexec_table);
     if (clo_flags & CLOEXEC)
         cloexec = 1;
     else if (clo_flags & KEEPEXEC)
@@ -484,12 +484,12 @@ CAMLprim value netsys_openat(value dirfd, value path, value flags, value perm)
 #if defined(O_CLOEXEC)
     if (cloexec) cv_flags |= O_CLOEXEC;
 #endif
-    p = stat_alloc(string_length(path) + 1);
+    p = caml_stat_alloc(caml_string_length(path) + 1);
     strcpy(p, String_val(path));
-    enter_blocking_section();
+    caml_enter_blocking_section();
     ret = openat(Int_val(dirfd), p, cv_flags, Int_val(perm));
-    leave_blocking_section();
-    stat_free(p);
+    caml_leave_blocking_section();
+    caml_stat_free(p);
     if (ret == -1) uerror("openat", path);
 #if !defined(O_CLOEXEC)
     {
@@ -517,8 +517,8 @@ CAMLprim value netsys_faccessat(value dirfd, value path, value perms,
 {
 #ifdef HAVE_AT
     int ret, cv_perms, cv_flags;
-    cv_perms = convert_flag_list(perms, access_permission_table);
-    cv_flags = convert_flag_list(flags, at_flags_table);
+    cv_perms = caml_convert_flag_list(perms, access_permission_table);
+    cv_flags = caml_convert_flag_list(flags, at_flags_table);
     cv_flags &= (AT_EACCESS | AT_SYMLINK_NOFOLLOW);
     ret = faccessat(Int_val(dirfd), String_val(path), cv_perms, cv_flags);
     if (ret == -1)
@@ -561,7 +561,7 @@ CAMLprim value netsys_linkat(value olddirfd, value oldpath,
 {
 #ifdef HAVE_AT
     int cv_flags;
-    cv_flags = convert_flag_list(flags, at_flags_table);
+    cv_flags = caml_convert_flag_list(flags, at_flags_table);
     cv_flags &= AT_SYMLINK_FOLLOW;  /* only allowed flag here */
     if (linkat(Int_val(olddirfd), String_val(oldpath),
 	       Int_val(newdirfd), String_val(newpath), cv_flags) == -1)
@@ -577,7 +577,7 @@ CAMLprim value netsys_unlinkat(value dirfd, value path, value flags)
 {
 #ifdef HAVE_AT
     int cv_flags;
-    cv_flags = convert_flag_list(flags, at_flags_table);
+    cv_flags = caml_convert_flag_list(flags, at_flags_table);
     cv_flags &= AT_REMOVEDIR;  /* only allowed flag here */
     if (unlinkat(Int_val(dirfd), String_val(path), cv_flags) == -1)
 	uerror("unlinkat", path);
@@ -622,7 +622,7 @@ CAMLprim value netsys_readlinkat(value dirfd, value path)
   len = readlinkat(Int_val(dirfd), String_val(path), buffer, sizeof(buffer)-1);
   if (len == -1) uerror("readlinkat", path);
   buffer[len] = '\0';
-  return copy_string(buffer);
+  return caml_copy_string(buffer);
 #else
     invalid_argument("Netsys_posix.readlinkat not available");
 #endif

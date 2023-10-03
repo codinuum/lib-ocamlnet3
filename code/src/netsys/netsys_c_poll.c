@@ -75,7 +75,7 @@ CAMLprim value netsys_mk_poll_mem(value n) {
     };
     return s;
 #else
-    invalid_argument("netsys_mk_poll_mem");
+    caml_invalid_argument("netsys_mk_poll_mem");
 #endif
 }
 
@@ -89,7 +89,7 @@ CAMLprim value netsys_set_poll_mem(value s, value k, value fd, value ev, value r
     (*(Poll_mem_val(s)))[Int_val(k)] = p;
     return Val_unit;
 #else
-    invalid_argument("netsys_set_poll_mem");
+    caml_invalid_argument("netsys_set_poll_mem");
 #endif
 
 }
@@ -106,7 +106,7 @@ CAMLprim value netsys_get_poll_mem(value s, value k) {
     Store_field(triple, 2, Val_int(p.revents));
     return triple;
 #else
-    invalid_argument("netsys_get_poll_mem");
+    caml_invalid_argument("netsys_get_poll_mem");
 #endif
 }
 
@@ -120,7 +120,7 @@ CAMLprim value netsys_blit_poll_mem(value s1, value k1, value s2, value k2, valu
     memmove(p2 + Int_val(k2), p1 + Int_val(k1), l*sizeof(struct pollfd));
     return Val_unit;
 #else
-    invalid_argument("netsys_blit_poll_mem");
+    caml_invalid_argument("netsys_blit_poll_mem");
 #endif
 };
 
@@ -148,15 +148,15 @@ CAMLprim value netsys_poll(value s, value nv, value tv) {
     n = Int_val(nv);
     tmo = Long_val(tv);
     
-    enter_blocking_section();
+    caml_enter_blocking_section();
     r = poll(p, n, tmo);
-    leave_blocking_section();
+    caml_leave_blocking_section();
 
     if (r == -1) uerror("poll", Nothing);
     
     return Val_int(r);
 #else
-     invalid_argument("netsys_poll");
+     caml_invalid_argument("netsys_poll");
 #endif
 }
 
@@ -266,7 +266,7 @@ CAMLprim value netsys_create_event_aggreg(value cancelv)
 #endif
     return r;
 #else
-    invalid_argument("Netsys_posix.create_event_aggregator not available");
+    caml_invalid_argument("Netsys_posix.create_event_aggregator not available");
 #endif
 }
 
@@ -286,7 +286,7 @@ CAMLprim value netsys_destroy_event_aggreg(value pav)
     };
     return Val_unit;
 #else
-    invalid_argument("Netsys_posix.destroy_event_aggregator not available");
+    caml_invalid_argument("Netsys_posix.destroy_event_aggregator not available");
 #endif
 }
 
@@ -299,7 +299,7 @@ CAMLprim value netsys_event_aggreg_fd(value pav)
     pa = *(Poll_aggreg_val(pav));
     return Val_int(pa->fd);
 #else
-    invalid_argument("Netsys_posix.event_aggregator_fd not available");
+    caml_invalid_argument("Netsys_posix.event_aggregator_fd not available");
 #endif
 }
 
@@ -353,7 +353,7 @@ CAMLprim value netsys_add_event_source(value pav, value pushv)
 
     return Val_unit;
 #else
-    invalid_argument("Netsys_posix.add_event_source not available");
+    caml_invalid_argument("Netsys_posix.add_event_source not available");
 #endif
 }
 
@@ -378,7 +378,7 @@ CAMLprim value netsys_del_event_source(value pav, value idv, value tagv)
 
     return Val_unit;
 #else
-    invalid_argument("Netsys_posix.del_event_source not available");
+    caml_invalid_argument("Netsys_posix.del_event_source not available");
 #endif
 }
 
@@ -398,7 +398,7 @@ CAMLprim value netsys_interrupt_aggreg(value pav)
     };
     return Val_unit;
 #else
-    invalid_argument("Netsys_posix.interrupt_event_aggregator not available");
+    caml_invalid_argument("Netsys_posix.interrupt_event_aggregator not available");
 #endif
 }
 
@@ -432,7 +432,7 @@ CAMLprim value netsys_push_event_sources(value pav, value pushlistv)
     };
     return Val_unit;
 #else
-    invalid_argument("Netsys_posix.push_event_sources not available");
+    caml_invalid_argument("Netsys_posix.push_event_sources not available");
 #endif
 }
 
@@ -486,6 +486,6 @@ CAMLprim value netsys_poll_event_sources(value pav, value tmov)
 
     CAMLreturn(r);
 #else
-    invalid_argument("Netsys_posix.pull_event_sources not available");
+    caml_invalid_argument("Netsys_posix.pull_event_sources not available");
 #endif
 }

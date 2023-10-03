@@ -36,15 +36,15 @@ CAMLprim value netsys_shm_open(value path, value flags, value perm)
     int ret, cv_flags;
     char * p;
 
-    cv_flags = convert_flag_list(flags, shm_open_flag_table);
-    p = stat_alloc(string_length(path) + 1);
+    cv_flags = caml_convert_flag_list(flags, shm_open_flag_table);
+    p = caml_stat_alloc(caml_string_length(path) + 1);
     strcpy(p, String_val(path));
     ret = shm_open(p, cv_flags, Int_val(perm));
-    stat_free(p);
+    caml_stat_free(p);
     if (ret == -1) uerror("shm_open", path);
     CAMLreturn (Val_int(ret));
 #else
-    invalid_argument("Netsys.shm_open not available");
+    caml_invalid_argument("Netsys.shm_open not available");
 #endif
 }
 
@@ -58,7 +58,7 @@ CAMLprim value netsys_shm_unlink(value path)
     if (ret == -1) uerror("shm_unlink", path);
     return Val_unit;
 #else
-    invalid_argument("Netsys.shm_unlink not available");
+    caml_invalid_argument("Netsys.shm_unlink not available");
 #endif
 }
 

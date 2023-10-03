@@ -41,7 +41,7 @@ CAMLprim value netsys_fallocate(value fd, value start, value len) {
 	unix_error(r, "posix_fallocate64", Nothing);
     return Val_unit;
 #else
-    invalid_argument("Netsys.fallocate not available");
+    caml_invalid_argument("Netsys.fallocate not available");
 #endif
 }
 

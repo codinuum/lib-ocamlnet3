@@ -282,7 +282,7 @@ CAMLprim value netsys_install_sigchld_handler(value dummy) {
 	    (struct sigchld_atom *) malloc(sigchld_list_len * 
 					   sizeof(struct sigchld_atom));
 	if (sigchld_list == NULL) 
-	    failwith("Cannot allocate memory");
+	    caml_failwith("Cannot allocate memory");
 
 	for (k=0; k<sigchld_list_len; k++)
 	    sigchld_list[k].pid = 0;
@@ -302,7 +302,7 @@ CAMLprim value netsys_install_sigchld_handler(value dummy) {
 
     return Val_unit;
 #else
-    invalid_argument("Netsys_posix.install_subprocess_handler not available");
+    caml_invalid_argument("Netsys_posix.install_subprocess_handler not available");
 #endif
 }
 
@@ -349,7 +349,7 @@ CAMLprim value netsys_watch_subprocess(value pid_v, value pgid_v,
     int status, code, kill_flag;
     
     if (sigchld_list == NULL)
-	failwith("Netsys_posix.watch_subprocess: uninitialized");
+	caml_failwith("Netsys_posix.watch_subprocess: uninitialized");
 
     if (pipe(pfd) == -1)
 	uerror("pipe", Nothing);
@@ -425,7 +425,7 @@ CAMLprim value netsys_watch_subprocess(value pid_v, value pgid_v,
 	    sigchld_unlock(1);
 	    close(pfd[0]);
 	    close(pfd[1]);
-	    failwith("Cannot allocate memory");
+	    caml_failwith("Cannot allocate memory");
 	};
 
 	for (k=old_size; k<sigchld_list_len; k++)
@@ -469,13 +469,13 @@ CAMLprim value netsys_watch_subprocess(value pid_v, value pgid_v,
 
     sigchld_unlock(1);
 
-    r = alloc(2,0);
+    r = caml_alloc(2,0);
     Field(r,0) = Val_int(pfd[0]);
     Field(r,1) = Val_int(atom_idx);
     
     return r;
 #else
-    invalid_argument("Netsys_posix.watch_subprocess not available");
+    caml_invalid_argument("Netsys_posix.watch_subprocess not available");
 #endif
 }
 
@@ -498,7 +498,7 @@ CAMLprim value netsys_ignore_subprocess(value atom_idx_v) {
 
     return Val_unit;
 #else
-    invalid_argument("Netsys_posix.ignore_subprocess not available");
+    caml_invalid_argument("Netsys_posix.ignore_subprocess not available");
 #endif
 }
 
@@ -521,7 +521,7 @@ CAMLprim value netsys_forget_subprocess(value atom_idx_v) {
 
     return Val_unit;
 #else
-    invalid_argument("Netsys_posix.forget_subprocess not available");
+    caml_invalid_argument("Netsys_posix.forget_subprocess not available");
 #endif
 }
 
@@ -554,15 +554,15 @@ CAMLprim value netsys_get_subprocess_status(value atom_idx_v) {
 
     if (copy.terminated) {
 	if (WIFEXITED(copy.status)) {
-	    st = alloc_small(1, TAG_WEXITED);
+	    st = caml_alloc_small(1, TAG_WEXITED);
 	    Field(st, 0) = Val_int(WEXITSTATUS(copy.status));
 	}
 	else {
-	    st = alloc_small(1, TAG_WSIGNALED);
+	    st = caml_alloc_small(1, TAG_WSIGNALED);
 	    Field(st, 0) = 
 		Val_int(caml_rev_convert_signal_number(WTERMSIG(copy.status)));
 	};
-	r = alloc(1,0);
+	r = caml_alloc(1,0);
 	Field(r, 0) = st;
     }
     else {
@@ -571,7 +571,7 @@ CAMLprim value netsys_get_subprocess_status(value atom_idx_v) {
 
     return r;
 #else
-    invalid_argument("Netsys_posix.forget_subprocess not available");
+    caml_invalid_argument("Netsys_posix.forget_subprocess not available");
 #endif
 }
 
@@ -597,7 +597,7 @@ CAMLprim value netsys_kill_subprocess(value sig_v, value atom_idx_v) {
     return Val_unit;
 
 #else
-    invalid_argument("Netsys_posix.kill_subprocess not available");
+    caml_invalid_argument("Netsys_posix.kill_subprocess not available");
 #endif
 }
 
@@ -634,7 +634,7 @@ CAMLprim value netsys_killpg_subprocess(value sig_v, value atom_idx_v) {
     return Val_unit;
 
 #else
-    invalid_argument("Netsys_posix.killpg_subprocess not available");
+    caml_invalid_argument("Netsys_posix.killpg_subprocess not available");
 #endif
 }
 
@@ -648,7 +648,7 @@ CAMLprim value netsys_kill_all_subprocesses(value sig_v, value o_flag_v,
     int k;
 
     if (sigchld_list == NULL)
-	failwith("Netsys_posix.watch_subprocess: uninitialized");
+	caml_failwith("Netsys_posix.watch_subprocess: uninitialized");
 
     sig = caml_convert_signal_number(Int_val(sig_v));
     o_flag = Bool_val(o_flag_v);
@@ -672,7 +672,7 @@ CAMLprim value netsys_kill_all_subprocesses(value sig_v, value o_flag_v,
     return Val_unit;
 
 #else
-    invalid_argument("Netsys_posix.kill_all_subprocesses not available");
+    caml_invalid_argument("Netsys_posix.kill_all_subprocesses not available");
 #endif
 }
 
@@ -686,7 +686,7 @@ CAMLprim value netsys_killpg_all_subprocesses(value sig_v, value o_flag_v) {
     pid_t pgid;
 
     if (sigchld_list == NULL)
-	failwith("Netsys_posix.watch_subprocess: uninitialized");
+	caml_failwith("Netsys_posix.watch_subprocess: uninitialized");
 
     sig = caml_convert_signal_number(Int_val(sig_v));
     o_flag = Bool_val(o_flag_v);
@@ -722,7 +722,7 @@ CAMLprim value netsys_killpg_all_subprocesses(value sig_v, value o_flag_v) {
     return Val_unit;
 
 #else
-    invalid_argument("Netsys_posix.killpg_all_subprocesses not available");
+    caml_invalid_argument("Netsys_posix.killpg_all_subprocesses not available");
 #endif
 }
 

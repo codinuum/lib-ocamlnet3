@@ -213,45 +213,45 @@ object (self)
     if closed then self # complain_closed();
     try
       if len=0 then raise Sys_blocked_io;
-      let n = Pervasives.input ch buf pos len in
+      let n = Stdlib.input ch buf pos len in
       if n=0 then raise End_of_file else n
     with
 	Sys_blocked_io -> 0
 
   method really_input buf pos len = 
     if closed then self # complain_closed();
-    Pervasives.really_input ch buf pos len 
+    Stdlib.really_input ch buf pos len 
 
   method really_input_string len = 
     if closed then self # complain_closed();
     #ifdef HAVE_BYTES
-      Pervasives.really_input_string ch len 
+      Stdlib.really_input_string ch len 
     #else
       let buf = String.create len in
-      Pervasives.really_input ch buf 0 len;
+      Stdlib.really_input ch buf 0 len;
       buf
     #endif
 
   method input_char () =
     if closed then self # complain_closed();
-    Pervasives.input_char ch 
+    Stdlib.input_char ch 
 
   method input_line () =
     if closed then self # complain_closed();
-    Pervasives.input_line ch 
+    Stdlib.input_line ch 
 
   method input_byte () =
     if closed then self # complain_closed();
-    Pervasives.input_byte ch 
+    Stdlib.input_byte ch 
 
   method close_in () =
     if not closed then (
-      Pervasives.close_in ch; closed <- true; onclose()
+      Stdlib.close_in ch; closed <- true; onclose()
     )
 
   method pos_in =
     if closed then self # complain_closed();
-    Pervasives.pos_in ch 
+    Stdlib.pos_in ch 
 end
 ;;
 
@@ -999,17 +999,17 @@ object (self)
 
   method output buf pos len =
     if closed then self # complain_closed();
-    (* Pervasives.output does not support non-blocking I/O directly.
+    (* Stdlib.output does not support non-blocking I/O directly.
      * Work around it:
      *)
-    let p0 = Pervasives.pos_out ch in
+    let p0 = Stdlib.pos_out ch in
     try 
-      Pervasives.output ch buf pos len;
+      Stdlib.output ch buf pos len;
       errflag := false;
       len
     with
       | Sys_blocked_io ->
-	  let p1 = Pervasives.pos_out ch in
+	  let p1 = Stdlib.pos_out ch in
 	  errflag := false;
 	  p1 - p0
       | error ->
@@ -1018,35 +1018,35 @@ object (self)
 
   method really_output buf pos len =
     if closed then self # complain_closed();
-    monitored (Pervasives.output ch buf pos) len
+    monitored (Stdlib.output ch buf pos) len
 
   method really_output_string buf pos len =
     if closed then self # complain_closed();
     #ifdef HAVE_BYTES
-      monitored (Pervasives.output_substring ch buf pos) len
+      monitored (Stdlib.output_substring ch buf pos) len
     #else
-      monitored (Pervasives.output ch buf pos) len
+      monitored (Stdlib.output ch buf pos) len
     #endif
 
   method output_char c =
     if closed then self # complain_closed();
-    monitored (Pervasives.output_char ch) c
+    monitored (Stdlib.output_char ch) c
 
   method output_string s =
     if closed then self # complain_closed();
-    monitored (Pervasives.output_string ch) s
+    monitored (Stdlib.output_string ch) s
 
   method output_bytes s =
     if closed then self # complain_closed();
     #ifdef HAVE_BYTES
-      monitored (Pervasives.output_bytes ch) s
+      monitored (Stdlib.output_bytes ch) s
     #else
-      monitored (Pervasives.output_string ch) s
+      monitored (Stdlib.output_string ch) s
     #endif
 
   method output_byte b =
     if closed then self # complain_closed();
-    monitored (Pervasives.output_byte ch) b
+    monitored (Stdlib.output_byte ch) b
 
   method output_buffer b =
     if closed then self # complain_closed();
@@ -1061,7 +1061,7 @@ object (self)
 
   method flush() =
     if closed then self # complain_closed();
-    monitored Pervasives.flush ch
+    monitored Stdlib.flush ch
 
   method close_out() =
     if not closed then (
@@ -1071,9 +1071,9 @@ object (self)
 	     exception handler
 	   *)
 	  if !errflag then
-	    Pervasives.close_out_noerr ch
+	    Stdlib.close_out_noerr ch
 	  else
-	    Pervasives.close_out ch; 
+	    Stdlib.close_out ch; 
 	  closed <- true; 
 	with
 	  | error ->
@@ -1082,7 +1082,7 @@ object (self)
 		"Netchannels.output_channel: \
                    Suppressed error in close_out: %s - backtrace: %s"
 		(Netexn.to_string error) bt;
-	      Pervasives.close_out_noerr ch;
+	      Stdlib.close_out_noerr ch;
 	      closed <- true; 
       );
       onclose()
@@ -1090,7 +1090,7 @@ object (self)
 
   method pos_out = 
     if closed then self # complain_closed();
-    Pervasives.pos_out ch
+    Stdlib.pos_out ch
 
 end
 ;;
@@ -1844,7 +1844,7 @@ object (self)
                   Suppressed error in close_out: %s - backtrace: %s"
 		(Netexn.to_string error) bt;
       );
-      Pervasives.close_in transch_in;
+      Stdlib.close_in transch_in;
       trans # close_out();      (* closes transch_out *)
       out # close_out();
       closed := true
@@ -1859,7 +1859,7 @@ object (self)
     need_clear <- true;
     let len = trans # pos_out in
     trans # flush();
-    Pervasives.seek_in transch_in 0;
+    Stdlib.seek_in transch_in 0;
     let trans' = new input_channel transch_in in
     ( try 
         out # output_channel ~len trans';
@@ -1876,7 +1876,7 @@ object (self)
   method private clear() =
     (* delete the contents of the file *)
     (* First empty the file and reset the output channel: *)
-    Pervasives.seek_out transch_out 0;
+    Stdlib.seek_out transch_out 0;
     Unix.ftruncate (Unix.descr_of_out_channel transch_out) 0;
     (* Renew the input channel. We create a new channel to avoid problems
      * with the internal buffer of the channel.

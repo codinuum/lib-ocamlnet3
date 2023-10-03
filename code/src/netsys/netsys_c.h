@@ -184,9 +184,21 @@ extern void caml_darken (value, value *);
    this file.
 */
 
-extern value unix_error_of_code (int errcode);
-extern void unix_error (int errcode, char * cmdname, value arg) Noreturn;
-extern void uerror (char * cmdname, value arg) Noreturn;
+extern value caml_unix_error_of_code (int errcode);
+extern int caml_unix_code_of_unix_error (value error);
+
+CAMLnoreturn_start
+extern void caml_unix_error (int errcode, const char * cmdname, value arg)
+CAMLnoreturn_end;
+
+CAMLnoreturn_start
+extern void caml_uerror (const char * cmdname, value arg)
+CAMLnoreturn_end;
+
+#define unix_error_of_code caml_unix_error_of_code
+#define code_of_unix_error caml_unix_code_of_unix_error
+#define uerror caml_uerror
+#define unix_error caml_unix_error
 
 #define DIR_Val(v) *((DIR **) &Field(v, 0))
 

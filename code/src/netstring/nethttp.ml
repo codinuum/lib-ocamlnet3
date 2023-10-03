@@ -1009,7 +1009,7 @@ module Header = struct
       snd
       (List.stable_sort
 	 (fun (q1, tok_param1) (q2, tok_param2) ->
-	    Pervasives.compare q2 q1)
+	    Stdlib.compare q2 q1)
 	 (List.filter
 	    (fun (q, tok_param) ->
 	       q > 0.0)

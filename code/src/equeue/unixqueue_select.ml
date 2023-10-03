@@ -35,7 +35,7 @@ end
 module Fdescr = struct
   type t = Unix.file_descr
 
-  let compare (a:t) (b:t) = Pervasives.compare a b
+  let compare (a:t) (b:t) = Stdlib.compare a b
 
 end;;
 
@@ -59,7 +59,7 @@ module RID = struct
   type t = operation
 
   (* let compare (rid1:t) (rid2:t) =
-        Pervasives.compare rid1 rid2
+        Stdlib.compare rid1 rid2
    *)
 
   let equal (rid1:t) (rid2:t) =

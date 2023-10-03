@@ -283,7 +283,7 @@ let hashtbl_from_alist l =
 
 module S = struct
   type t = string
-  let compare = (Pervasives.compare : string -> string -> int)
+  let compare = (Stdlib.compare : string -> string -> int)
 end
 
 module Strset = Set.Make(S);;

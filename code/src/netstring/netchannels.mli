@@ -389,7 +389,7 @@ class input_channel :
   (** Creates an input channel from an [in_channel], which must be open.
    *
    * The method [pos_in] reflects the real position in the channel as
-   * returned by [Pervasives.pos_in]. This works for both seekable and
+   * returned by [Stdlib.pos_in]. This works for both seekable and
    * non-seekable channels.
    *
    * The method [close_in] also closes the underlying [in_channel].
@@ -530,7 +530,7 @@ class output_channel :
   (** Creates an output channel writing into an [out_channel].
    *
    * The method [pos_out] reflects the real position in the channel as
-   * returned by [Pervasives.pos_out]. This works for both seekable and
+   * returned by [Stdlib.pos_out]. This works for both seekable and
    * non-seekable channels.
    *
    * The method [close_out] also closes the underlying [out_channel].

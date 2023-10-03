@@ -28,7 +28,7 @@ OBJECTS  = netconst.cmo netstring_str.cmo netbuffer.cmo netunichar.cmo \
 
 PKGNAME  = netstring
 
-REQUIRES += $(REGEXP_PROVIDER_MAKE) bigarray
+REQUIRES += $(REGEXP_PROVIDER_MAKE) camlp-streams
 INCLUDES += $(INC_NETSYS)
 INCLUDES += -I ../netstring-pcre
 

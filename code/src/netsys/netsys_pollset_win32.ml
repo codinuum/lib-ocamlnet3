@@ -27,9 +27,9 @@ let list_of_socket_sets ht in_set out_set pri_set =
   let in_arr  = Array.of_list in_set in
   let out_arr = Array.of_list out_set in
   let pri_arr = Array.of_list pri_set in
-  Array.sort Pervasives.compare in_arr;
-  Array.sort Pervasives.compare out_arr;
-  Array.sort Pervasives.compare pri_arr;
+  Array.sort Stdlib.compare in_arr;
+  Array.sort Stdlib.compare out_arr;
+  Array.sort Stdlib.compare pri_arr;
   Hashtbl.fold
     (fun fd (ev,_) l ->
        let m_in = Netsys_impl_util.mem_sorted_array fd in_arr in

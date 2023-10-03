@@ -93,7 +93,7 @@ CAMLprim value netsys_ioprio_get(value target) {
     }
 
     if (ioprio == -1)
-	uerror("ioprio_get", Nothing);
+	caml_uerror("ioprio_get", Nothing);
 
     ioprio_class = ioprio >> IOPRIO_CLASS_SHIFT;
     ioprio_data = ioprio & IOPRIO_PRIO_MASK;
@@ -180,7 +180,7 @@ CAMLprim value netsys_ioprio_set(value target, value ioprio_arg) {
     }
 
     if (sysres == -1)
-	uerror("ioprio_set", Nothing);
+	caml_uerror("ioprio_set", Nothing);
 
     return Val_unit;
 #else

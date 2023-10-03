@@ -129,7 +129,7 @@ let channel_logger ch max_lev lev msg =
     
 
 let current_logger =
-  ref(channel_logger Pervasives.stderr `Debug)
+  ref(channel_logger Stdlib.stderr `Debug)
 
 
 let log lev msg =

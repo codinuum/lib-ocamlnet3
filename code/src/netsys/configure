@@ -199,20 +199,20 @@ if [ $have_new_modify -gt 0 ]; then
     have_weak_modify=$(( 1 - $? ))
 fi
 
-printf "Checking whether out-of-heap values are supported and mutable... "
-if [ $have_new_modify -gt 0 ]; then
-    support_outofheap=$have_weak_modify
-else
-    support_outofheap=1
-fi
+# printf "Checking whether out-of-heap values are supported and mutable... "
+# if [ $have_new_modify -gt 0 ]; then
+#     support_outofheap=$have_weak_modify
+# else
+#     support_outofheap=1
+# fi
 
-if [ $support_outofheap -gt 0 ]; then
-    echo "yes"
-    def_ooh_object="netsys_c_outofheap.o"
-else
-    echo "no"
-    def_ooh_object=""
-fi
+# if [ $support_outofheap -gt 0 ]; then
+#     echo "yes"
+#     def_ooh_object="netsys_c_outofheap.o"
+# else
+#     echo "no"
+#     def_ooh_object=""
+# fi
 
 ######################################################################
 

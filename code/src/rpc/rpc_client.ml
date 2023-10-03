@@ -49,7 +49,7 @@ let () =
 
 module SessionUint4 = struct
   type t = uint4
-  let compare = (Pervasives.compare : uint4 -> uint4 -> int)
+  let compare = (Stdlib.compare : uint4 -> uint4 -> int)
 end
 
 module SessionMap =

@@ -120,7 +120,7 @@ CAMLprim value netsys_sem_open(value namev,
     int flags;
 
     init = Long_val(initv);
-    flags = convert_flag_list(flagsv, sem_open_flag_table);
+    flags = caml_convert_flag_list(flagsv, sem_open_flag_table);
     s = sem_open(String_val(namev),
 		 flags,
 		 Int_val(modev),
@@ -129,7 +129,7 @@ CAMLprim value netsys_sem_open(value namev,
     r = alloc_sem_block(s, 1);
     return r;
 #else
-    invalid_argument("Netsys.sem_open not available");
+    caml_invalid_argument("Netsys.sem_open not available");
 #endif
 }
 
@@ -141,13 +141,13 @@ CAMLprim value netsys_sem_close(value srv)
 
     sb = Sem_block_val(srv);
     if (sb->sem_ptr == NULL)
-	invalid_argument ("Netsys.sem_close: stale semaphore");
+	caml_invalid_argument ("Netsys.sem_close: stale semaphore");
     code = sem_close(sb->sem_ptr);
     if (code == -1) uerror("sem_close", Nothing);
     sb->sem_ptr = NULL;
     return Val_unit;
 #else
-    invalid_argument("Netsys.sem_close not available");
+    caml_invalid_argument("Netsys.sem_close not available");
 #endif
 }
 
@@ -159,7 +159,7 @@ CAMLprim value netsys_sem_unlink(value namev)
     if (code == -1) uerror("sem_unlink", Nothing);
     return Val_unit;
 #else
-    invalid_argument("Netsys.sem_unlink not available");
+    caml_invalid_argument("Netsys.sem_unlink not available");
 #endif
 }
 
@@ -175,13 +175,13 @@ CAMLprim value netsys_sem_init(value memv,
     value r;
 
     init = Long_val(initv);
-    s = (sem_t *) (((char *) Bigarray_val(memv)->data) + Long_val(posv));
+    s = (sem_t *) (((char *) Caml_ba_array_val(memv)->data) + Long_val(posv));
     code = sem_init(s, Bool_val(psharedv), init);
     if (code == -1) uerror("sem_init", Nothing);
     r = alloc_sem_block(s, 0);
     return r;
 #else
-    invalid_argument("Netsys.sem_init not available");
+    caml_invalid_argument("Netsys.sem_init not available");
 #endif
 }
 
@@ -192,11 +192,11 @@ CAMLprim value netsys_as_sem(value memv,
     sem_t *s;
     value r;
 
-    s = (sem_t *) (((char *) Bigarray_val(memv)->data) + Long_val(posv));
+    s = (sem_t *) (((char *) Caml_ba_array_val(memv)->data) + Long_val(posv));
     r = alloc_sem_block(s, 0);
     return r;
 #else
-    invalid_argument("Netsys.as_sem not available");
+    caml_invalid_argument("Netsys.as_sem not available");
 #endif
 }
 
@@ -209,13 +209,13 @@ CAMLprim value netsys_sem_destroy(value srv)
 
     sb = Sem_block_val(srv);
     if (sb->sem_ptr == NULL)
-	invalid_argument ("Netsys.sem_destroy: stale semaphore");
+	caml_invalid_argument ("Netsys.sem_destroy: stale semaphore");
     code = sem_destroy(sb->sem_ptr);
     if (code == -1) uerror("sem_destroy", Nothing);
     sb->sem_ptr = NULL;
     return Val_unit;
 #else
-    invalid_argument("Netsys.sem_destroy not available");
+    caml_invalid_argument("Netsys.sem_destroy not available");
 #endif
 }
 
@@ -229,16 +229,16 @@ CAMLprim value netsys_sem_getvalue(value srv)
 
     sb = Sem_block_val(srv);
     if (sb->sem_ptr == NULL)
-	invalid_argument ("Netsys.sem_getvalue: stale semaphore");
+	caml_invalid_argument ("Netsys.sem_getvalue: stale semaphore");
     code = sem_getvalue(sb->sem_ptr, &sval);
     if (code == -1) uerror("sem_getvalue", Nothing);
     if (sval < 0) sval = 0;
 #ifndef ARCH_SIXTYFOUR
-    if (sval > 1073741823) unix_error(EINVAL, "sem_getvalue", Nothing);
+    if (sval > 1073741823) caml_unix_error(EINVAL, "sem_getvalue", Nothing);
 #endif
     return Val_int(sval);
 #else
-    invalid_argument("Netsys.sem_getvalue not available");
+    caml_invalid_argument("Netsys.sem_getvalue not available");
 #endif
 }
 
@@ -250,12 +250,12 @@ CAMLprim value netsys_sem_post(value srv)
 
     sb = Sem_block_val(srv);
     if (sb->sem_ptr == NULL)
-	invalid_argument ("Netsys.sem_post: stale semaphore");
+	caml_invalid_argument ("Netsys.sem_post: stale semaphore");
     code = sem_post(sb->sem_ptr);
     if (code == -1) uerror("sem_post", Nothing);
     return Val_unit;
 #else
-    invalid_argument("Netsys.sem_post not available");
+    caml_invalid_argument("Netsys.sem_post not available");
 #endif
 }
 
@@ -270,19 +270,19 @@ CAMLprim value netsys_sem_wait(value srv, value bv)
 
     sb = Sem_block_val(srv);
     if (sb->sem_ptr == NULL)
-	invalid_argument ("Netsys.sem_wait: stale semaphore");
+	caml_invalid_argument ("Netsys.sem_wait: stale semaphore");
     tag = Int_val(bv);
     s = sb->sem_ptr;
-    enter_blocking_section();
+    caml_enter_blocking_section();
     if (tag == 0)
 	code = sem_wait(s);
     else
 	code = sem_trywait(s);
-    leave_blocking_section();
+    caml_leave_blocking_section();
     if (code == -1) uerror("sem_wait", Nothing);
     return Val_unit;
 #else
-    invalid_argument("Netsys.sem_wait not available");
+    caml_invalid_argument("Netsys.sem_wait not available");
 #endif
 }
 

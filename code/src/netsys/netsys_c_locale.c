@@ -39,28 +39,28 @@ CAMLprim value netsys_query_langinfo(value locale)
 
     old_locale = setlocale(LC_ALL, NULL);
     if (old_locale == NULL)
-	failwith("Netsys_posix.query_locale: no locale support");
-    oldcopy_locale = stat_alloc(strlen(old_locale) + 1);
+	caml_failwith("Netsys_posix.query_locale: no locale support");
+    oldcopy_locale = caml_stat_alloc(strlen(old_locale) + 1);
     strcpy(oldcopy_locale, old_locale);
 
     new_locale = setlocale(LC_ALL, String_val(locale));
     if (new_locale == NULL) {
-	stat_free(oldcopy_locale);
-	failwith("Netsys_posix.query_locale: cannot set this locale");
+	caml_stat_free(oldcopy_locale);
+	caml_failwith("Netsys_posix.query_locale: cannot set this locale");
     }
     
     n = sizeof(locale_items_table) / sizeof(locale_items_table[0]);
-    s = alloc(n,0);
+    s = caml_alloc(n,0);
     for (k=0; k<n; k++) {
-	Store_field(s,k,copy_string(nl_langinfo(locale_items_table[k])));
+	Store_field(s,k,caml_copy_string(nl_langinfo(locale_items_table[k])));
     };
     
     setlocale(LC_ALL, oldcopy_locale);
-    stat_free(oldcopy_locale);
+    caml_stat_free(oldcopy_locale);
 
     CAMLreturn (s);
 #else
-    invalid_argument("Netsys_posix.query_locale not available");
+    caml_invalid_argument("Netsys_posix.query_locale not available");
 #endif
 }
 

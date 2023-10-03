@@ -414,7 +414,7 @@ module ManagedClient = struct
       | `Up up -> up.serial
 
   let compare mc1 mc2 =
-    Pervasives.compare mc1.id mc2.id
+    Stdlib.compare mc1.id mc2.id
 
   let pending_calls mc =
     mc.pending_calls
@@ -1037,7 +1037,7 @@ module ManagedSet = struct
 	  (* Sort the services by total load first: *)
 	  Array.sort 
 	    (fun j1 j2 ->
-	       Pervasives.compare 
+	       Stdlib.compare 
 		 mset.total_load.(j1)
 		 mset.total_load.(j2)
 	    )
