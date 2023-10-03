@@ -20,7 +20,6 @@
 #define CAML_BA_MARSHAL_ID "_bigarr02"
 #endif
 
-#define Color_hd(hd) ((color_t) ((hd) & (3 << 8)))
 #define caml_allocated_words Caml_state->allocated_words
 
 /**********************************************************************/
@@ -34,7 +33,7 @@ CAMLprim value netsys_blit_memory_to_string(value memv,
 					    value lenv)
 {
     struct caml_ba_array *mem = Caml_ba_array_val(memv);
-    char * s = Bytes_val(sv);
+    unsigned char * s = Bytes_val(sv);
     long memoff = Long_val(memoffv);
     long soff = Long_val(soffv);
     long len = Long_val(lenv);
@@ -320,16 +319,6 @@ CAMLprim value netsys_reshape(value bv)
 /* Obj helpers                                                        */
 /**********************************************************************/
 
-/* From gc.h: */
-#ifndef CAML_GC_H
-#define Caml_white (0 << 8)
-#define Caml_gray  (1 << 8)
-#define Caml_blue  (2 << 8)
-#define Caml_black (3 << 8)
-#define Color_hd(hd) ((color_t) ((hd) & Caml_black))
-#define Whitehd_hd(hd) (((hd)  & ~Caml_black)/*| Caml_white*/)
-#endif
-
 /* e.g. to get the color:
 
    color = Color_hd(Hd_val(value))
@@ -360,8 +349,7 @@ CAMLprim value netsys_set_color(value objv, value colv)
     int col;
     col = Int_val(colv);
     //Hd_val(objv) = Whitehd_hd(Hd_val(objv)) | (col << 8);
-    atomic_store_explicit(Hp_atomic_val(objv),
-                          Whitehd_hd(Hd_val(objv)) | (col << 8),
+    atomic_store_explicit(Hp_atomic_val(objv), Hd_with_color(Hd_val(objv), col),
                           memory_order_relaxed);
     return Val_unit;
 }
@@ -658,7 +646,7 @@ CAMLprim value netsys_init_string(value memv, value offv, value lenv)
 
 struct named_custom_ops {
     char *name;
-    void *ops;
+    const struct custom_operations *ops;
     struct named_custom_ops *next;
 };
 
@@ -714,10 +702,10 @@ int netsys_init_value_1(struct htab *t,
     int code, i;
     intnat addr_delta;
     struct named_custom_ops *ops_ptr;
-    void *int32_target_ops;
-    void *int64_target_ops;
-    void *nativeint_target_ops;
-    void *bigarray_target_ops;
+    const struct custom_operations *int32_target_ops;
+    const struct custom_operations *int64_target_ops;
+    const struct custom_operations *nativeint_target_ops;
+    const struct custom_operations *bigarray_target_ops;
 
 #ifdef DEBUG
     fprintf(stderr,
@@ -844,7 +832,7 @@ int netsys_init_value_1(struct htab *t,
 		    copy_addr = (void *) copy;
 		    //Hd_val(copy) = Whitehd_hd(Hd_val(copy)) | color;
                     atomic_store_explicit(Hp_atomic_val(copy),
-                                          Whitehd_hd(Hd_val(copy)) | color,
+                                          Hd_with_color(Hd_val(copy), color),
                                           memory_order_relaxed);
 		}
 
@@ -892,7 +880,7 @@ int netsys_init_value_1(struct htab *t,
 		/* It an opaque value */
 		int do_copy = 0;
 		int do_bigarray = 0;
-		void *target_ops = NULL;
+		const struct custom_operations *target_ops = NULL;
 		char caml_id = ' ';  /* only b, i, j, n */
 		/* Check for bigarrays and other custom blocks */
 		switch (work_tag) {
@@ -909,11 +897,8 @@ int netsys_init_value_1(struct htab *t,
 		    do_copy = 1; break;
 		case Custom_tag: 
 		    {
-			struct custom_operations *custom_ops;
-			const char *id;
-
-			custom_ops = Custom_ops_val(work);
-			id = custom_ops->identifier;
+			const struct custom_operations *custom_ops = Custom_ops_val(work);
+			const char *id = custom_ops->identifier;
 
 			if (id[0] == '_') {
 			    switch (id[1]) {
@@ -987,7 +972,7 @@ int netsys_init_value_1(struct htab *t,
 			copy_addr = (void *) copy;
 			//Hd_val(copy) = Whitehd_hd(Hd_val(copy)) | color;
                         atomic_store_explicit(Hp_atomic_val(copy),
-                                              Whitehd_hd(Hd_val(copy)) | color,
+                                              Hd_with_color(Hd_val(copy), color),
                                               memory_order_relaxed);
 
 			if (target_ops != NULL)
@@ -1508,7 +1493,7 @@ value netsys_copy_value(value flags, value orig)
 
 value netsys_get_custom_ops (value v) 
 {
-    struct custom_operations *custom_ops;
+    const struct custom_operations *custom_ops;
     CAMLparam1(v);
     CAMLlocal1(r);
 
@@ -1526,7 +1511,7 @@ value netsys_get_custom_ops (value v)
 
 
 value netsys_is_bigarray(value v) {
-    struct custom_operations *custom_ops;
+    const struct custom_operations *custom_ops;
     CAMLparam1(v);
     CAMLlocal1(r);
 

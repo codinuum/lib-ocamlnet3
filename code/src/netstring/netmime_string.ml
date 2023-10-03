@@ -979,7 +979,7 @@ let scan_structured_value s specials options =
       | _, t ->
 	  t :: collect scn
   in
-  let scn = create_mime_scanner specials options s in
+  let scn = create_mime_scanner ~specials ~scan_options:options s in
   collect scn
 ;;
 
@@ -995,7 +995,7 @@ let specials_rfc2045 =
 let scan_encoded_text_value s =
   let specials = [ ' '; '\t'; '\r'; '\n'; '('; '['; '"' ] in
   let options =  [ Recognize_encoded_words ] in
-  let scn = create_mime_scanner specials options s in
+  let scn = create_mime_scanner ~specials ~scan_options:options s in
   
   let rec collect () =
     match scan_token scn with
@@ -1016,7 +1016,7 @@ let scan_encoded_text_value s =
 
 let split_mime_type ct_type =
   let specials = specials_rfc2045 @ [ '"'; '['; ']' ] in
-  let scn = create_mime_scanner specials [] ct_type in
+  let scn = create_mime_scanner ~specials ~scan_options:[] ct_type in
   let rec collect () =
     match scan_token scn with
 	_, End ->
@@ -1955,7 +1955,7 @@ let scan_multipart_body s ~start_pos ~end_pos ~boundary =
   
 
 let scan_multipart_body_and_decode s ~start_pos:i0 ~end_pos:i1 ~boundary =
-  let parts = scan_multipart_body s i0 i1 boundary in
+  let parts = scan_multipart_body s ~start_pos:i0 ~end_pos:i1 ~boundary in
   List.map
     (fun (params, value) ->
        let encoding =
