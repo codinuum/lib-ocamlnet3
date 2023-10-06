@@ -61,8 +61,8 @@ CAMLprim value netsys_spawn_nat(value v_chdir,
     int cleanup_bsection;
 
     pid_t pid;
-    unsigned char **sub_argv;
-    unsigned char **sub_env;
+    char** sub_argv;
+    char** sub_env;
     int cleanup_sub_argv;
     int cleanup_sub_env;;
 
@@ -513,8 +513,8 @@ CAMLprim value netsys_posix_spawn_nat(value v_pg,
     int   use_fork_exec;
 
     pid_t pid;
-    unsigned char **sub_argv;
-    unsigned char **sub_env;
+    char** sub_argv;
+    char** sub_env;
     int cleanup_sub_argv;
     int cleanup_sub_env;;
 

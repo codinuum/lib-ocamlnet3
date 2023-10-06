@@ -1035,11 +1035,11 @@ let mk_date ?localzone ?zone ?nanos ~fmt t =
   format ~fmt (create ?localzone ?zone ?nanos t)
 
 let mk_mail_date ?localzone ?zone t =
-  format "%a, %d %b %Y %H:%M:%S %z" (create ?localzone ?zone t)
+  format ~fmt:"%a, %d %b %Y %H:%M:%S %z" (create ?localzone ?zone t)
 ;;
 
 let mk_usenet_date ?localzone ?zone t =
-  format "%A, %d-%b-%y %H:%M:%S %z" (create ?localzone ?zone t)
+  format ~fmt:"%A, %d-%b-%y %H:%M:%S %z" (create ?localzone ?zone t)
 ;;
 
 let mk_internet_date ?localzone ?zone ?(digits=0) t =

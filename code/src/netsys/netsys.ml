@@ -900,7 +900,7 @@ let connect_check fd =
     else
       true in
   if do_check then (
-    let e_code = Unix.getsockopt_int fd Unix.SO_ERROR in
+    let e_code = Unix.getsockopt_int fd Unix.getsockopt_error in
     try
       ignore(getpeername fd); 
       ()
