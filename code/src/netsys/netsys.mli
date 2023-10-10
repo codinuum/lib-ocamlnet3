@@ -418,8 +418,8 @@ val restarting_sleep : float -> unit
       [EINTR].
    *)
 
-val unix_error_of_code : int -> Unix.error
-  (** Converts an integer error into the corresponding variant *)
+(*val unix_error_of_code : int -> Unix.error
+  (** Converts an integer error into the corresponding variant *)*)
 
 val int64_of_file_descr : Unix.file_descr -> int64
   (** Returns the file descriptor as int64 number. Works for all OS. *)

@@ -881,7 +881,7 @@ let gclose fd_style fd =
 	    Unix.close fd
 
 
-external unix_error_of_code : int -> Unix.error = "netsys_unix_error_of_code"
+(*external unix_error_of_code : int -> Unix.error = "netsys_unix_error_of_code"*)
 
 
 let connect_check fd =
@@ -900,19 +900,21 @@ let connect_check fd =
     else
       true in
   if do_check then (
-    let e_code = Unix.getsockopt_int fd Unix.getsockopt_error in
+    let err_opt = Unix.getsockopt_error fd in
     try
-      ignore(getpeername fd); 
+      let _ = getpeername fd in
       ()
     with
-      | Unix.Unix_error(Unix.ENOTCONN,_,_) ->
+      | Unix.Unix_error(Unix.ENOTCONN,_,_) -> begin
 	  let detail =
 	    try
 	      let own_addr = Unix.getsockname fd in
 	      string_of_sockaddr own_addr
 	    with _ -> "n/a" in
-	  raise(Unix.Unix_error(unix_error_of_code e_code,
-				"connect_check", detail))
+          match err_opt with
+          | Some err -> raise(Unix.Unix_error(err, "connect_check", detail))
+          | None -> raise (Unix.Unix_error(Unix.ENOTCONN, "connect_check", detail))
+      end
   )
 
 external mcast_set_loop : Unix.file_descr -> bool -> unit 
