@@ -97,7 +97,7 @@ value netsys_get_peer_credentials(value fd) {
 	ucred_free(ucred);
     }
 #else
-    invalid_argument("get_peer_credentials");
+    caml_invalid_argument("get_peer_credentials");
 #endif
 
     /* Allocate a pair, and put the result into it: */
@@ -206,7 +206,7 @@ value netsys_peek_peer_credentials(value fd) {
 
 	memset(&msg, 0, sizeof msg);
 	crmsgsize = CMSG_SPACE(SOCKCREDSIZE(NGROUPS_MAX));
-	crmsg = stat_alloc(crmsgsize);
+	crmsg = caml_stat_alloc(crmsgsize);
 
 	memset(crmsg, 0, crmsgsize);
 	msg.msg_control = crmsg;
@@ -218,19 +218,19 @@ value netsys_peek_peer_credentials(value fd) {
 	iov.iov_len = 1;
 
 	if (recvmsg(Int_val(fd), &msg, MSG_PEEK) < 0) {
-	    stat_free(crmsg);
+	    caml_stat_free(crmsg);
 	    uerror("recvmsg", Nothing);
 	};
 
 	if (msg.msg_controllen == 0 ||
 	    (msg.msg_flags & MSG_CTRUNC) != 0) {
-	    stat_free(crmsg);
+	    caml_stat_free(crmsg);
 	    raise_not_found();
 	};
 	cmp = CMSG_FIRSTHDR(&msg);
 	if (cmp->cmsg_level != SOL_SOCKET ||
 	    cmp->cmsg_type != SCM_CREDS) {
-	    stat_free(crmsg);
+	    caml_stat_free(crmsg);
 	    raise_not_found();
 	};
 
@@ -241,7 +241,7 @@ value netsys_peek_peer_credentials(value fd) {
 	free(crmsg);
     }
 #else
-    invalid_argument("peek_peer_credentials");
+    caml_invalid_argument("peek_peer_credentials");
 #endif
 #endif
 

@@ -560,7 +560,7 @@ let functions =
       ~options: [
         `Pre("if (data_size__c < 0 || \
                   data_size__c > caml_ba_byte_size(Caml_ba_array_val(data))) \
-                      invalid_argument(\"gnutls_record_send\");"
+                      caml_invalid_argument(\"gnutls_record_send\");"
             )
       ]
       "error_code/uint gnutls_record_send \

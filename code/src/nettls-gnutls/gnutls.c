@@ -111,26 +111,26 @@ static value wrap_str_datum_p(const gnutls_datum_t *d) {
 static gnutls_datum_t unwrap_str_datum(value v) {
     gnutls_datum_t d;
     d.size = caml_string_length(v);
-    d.data = stat_alloc(d.size);
+    d.data = caml_stat_alloc(d.size);
     memcpy(d.data, String_val(v), d.size);
     return d;
 }
    
 static gnutls_datum_t * unwrap_str_datum_p(value v) {
     gnutls_datum_t *d;
-    d = stat_alloc(sizeof(gnutls_datum_t));
+    d = caml_stat_alloc(sizeof(gnutls_datum_t));
     *d = unwrap_str_datum(v);
     return d;
 }
    
 static void free_str_datum(gnutls_datum_t d) {
-    if (d.data != NULL) { stat_free(d.data); d.data = NULL; };
+    if (d.data != NULL) { caml_stat_free(d.data); d.data = NULL; };
 }
 
 static void free_str_datum_p(gnutls_datum_t *d) {
     if (d != NULL) {
-        if (d->data != NULL) stat_free(d->data);
-        stat_free(d);
+        if (d->data != NULL) caml_stat_free(d->data);
+        caml_stat_free(d);
     }
 }
    
@@ -405,7 +405,7 @@ static void attach_session_callbacks (gnutls_session_t s) {
     b_session_callbacks_t cb;
 
     cb = (b_session_callbacks_t) 
-            stat_alloc(sizeof(struct b_session_callbacks_st));
+            caml_stat_alloc(sizeof(struct b_session_callbacks_st));
     cb->session = s;
     cb->pull_fun = Val_int(0);
     cb->pull_timeout_fun = Val_int(0);
@@ -458,7 +458,7 @@ static void b_free_session(gnutls_session_t s) {
     caml_remove_generational_global_root(&(cb->db_store_fun));
     caml_remove_generational_global_root(&(cb->db_remove_fun));
 
-    stat_free(cb);
+    caml_stat_free(cb);
     gnutls_deinit(s);
 }
 
@@ -484,7 +484,7 @@ CAMLprim value net_b_set_pull_timeout_callback(value sv, value fun) {
     caml_modify_generational_global_root(&(cb->pull_timeout_fun), fun);
     return Val_unit;
 #else
-    invalid_argument("b_set_pull_timeout_callback");
+    caml_invalid_argument("b_set_pull_timeout_callback");
 #endif
 }
 
@@ -510,7 +510,7 @@ CAMLprim value net_b_set_verify_callback(value sv, value fun) {
     caml_modify_generational_global_root(&(cb->verify_fun), fun);
     return Val_unit;
 #else
-    invalid_argument("b_set_verify_callback");
+    caml_invalid_argument("b_set_verify_callback");
 #endif
 }
 
@@ -602,7 +602,7 @@ CAMLprim value net_gnutls_credentials_set(value sess, value creds) {
                                    );
         break;
     default:
-        failwith("net_gnutls_credentials_set");
+        caml_failwith("net_gnutls_credentials_set");
     };
     net_gnutls_error_check(error_code);
     attach_gnutls_session_t(sess, creds);
@@ -633,7 +633,7 @@ CAMLprim value net_gnutls_x509_crt_list_import(value datav, value formatv,
     code = gnutls_x509_crt_list_import(certs, &n, &data, format, 
                     flags | GNUTLS_X509_CRT_LIST_IMPORT_FAIL_IF_EXCEED);
     if (code == GNUTLS_E_SHORT_MEMORY_BUFFER) {
-        certs = (gnutls_x509_crt_t *) stat_alloc(n * sizeof(void *));
+        certs = (gnutls_x509_crt_t *) caml_stat_alloc(n * sizeof(void *));
         alloc_certs = 1;
         code = gnutls_x509_crt_list_import(certs, &n, &data, format, 
                                            flags);
@@ -646,7 +646,7 @@ CAMLprim value net_gnutls_x509_crt_list_import(value datav, value formatv,
         };
     };
     if (alloc_certs)
-        stat_free(certs);
+        caml_stat_free(certs);
     net_gnutls_error_check(code);
     CAMLreturn(array);
 }
@@ -676,7 +676,7 @@ CAMLprim value net_gnutls_x509_crl_list_import(value datav, value formatv,
     code = gnutls_x509_crl_list_import(certs, &n, &data, format, 
                     flags | GNUTLS_X509_CRT_LIST_IMPORT_FAIL_IF_EXCEED);
     if (code == GNUTLS_E_SHORT_MEMORY_BUFFER) {
-        certs = (gnutls_x509_crl_t *) stat_alloc(n * sizeof(void *));
+        certs = (gnutls_x509_crl_t *) caml_stat_alloc(n * sizeof(void *));
         alloc_certs = 1;
         code = gnutls_x509_crl_list_import(certs, &n, &data, format, 
                                            flags);
@@ -689,11 +689,11 @@ CAMLprim value net_gnutls_x509_crl_list_import(value datav, value formatv,
         };
     };
     if (alloc_certs)
-        stat_free(certs);
+        caml_stat_free(certs);
     net_gnutls_error_check(code);
     CAMLreturn(array);
 #else
-    invalid_argument("gnutls_x509_crl_list_import");
+    caml_invalid_argument("gnutls_x509_crl_list_import");
 #endif
 }
 

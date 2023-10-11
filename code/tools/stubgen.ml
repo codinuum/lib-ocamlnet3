@@ -447,7 +447,7 @@ let gen_abstract_ptr c mli ml tyname abs ~optional =
   fprintf c "  CAMLparam0();\n";
   fprintf c "  CAMLlocal2(v,r);\n";
   if not abs.abs_nullok then
-    fprintf c "  if (x == NULL) failwith(\"wrap_%s: NULL pointer\");\n" tyname;
+    fprintf c "  if (x == NULL) caml_failwith(\"wrap_%s: NULL pointer\");\n" tyname;
   fprintf c "  v = caml_alloc_custom(&abs_%s_ops, \
                                      sizeof(struct absstruct_%s), 0, 1);\n"
          tyname tyname;
@@ -550,7 +550,7 @@ let gen_enum c mli ml tyname cases ~optional =
     cases;
   fprintf c "    default: break;\n";
   fprintf c "  };\n";
-  fprintf c "  failwith(\"wrap_%s: unexpected value\");\n" tyname;
+  fprintf c "  caml_failwith(\"wrap_%s: unexpected value\");\n" tyname;
   fprintf c "}\n\n";
 
   fprintf c "static %s unwrap_%s(value v) {\n" tyname tyname;
@@ -568,9 +568,9 @@ let gen_enum c mli ml tyname cases ~optional =
          fprintf c "#endif\n"
     )
     cases;
-  fprintf c "    default: invalid_argument(\"unwrap_%s\");\n" tyname;
+  fprintf c "    default: caml_invalid_argument(\"unwrap_%s\");\n" tyname;
   fprintf c "  };\n";
-  fprintf c "  failwith(\"unwrap_%s: unexpected value\");\n" tyname;
+  fprintf c "  caml_failwith(\"unwrap_%s: unexpected value\");\n" tyname;
   fprintf c "}\n";
 
   if optional then
@@ -983,7 +983,7 @@ let gen_fun c mli ml name args directives free init =
                   let i1 = new_local() in
                   c_decls := sprintf "long %s;" i1 :: !c_decls;
                   let code1 =
-                    [ sprintf "%s = (%s) stat_alloc(Wosize_val(%s)*sizeof(%s));" 
+                    [ sprintf "%s = (%s) caml_stat_alloc(Wosize_val(%s)*sizeof(%s));" 
                               n1 c_ty n el_c_ty;
                       sprintf "for (%s=0; %s < Wosize_val(%s); %s++) {"
                               i1 i1 n i1;
@@ -1000,7 +1000,7 @@ let gen_fun c mli ml name args directives free init =
                          sprintf "};"
                        ]
                      else []) @
-                      [ sprintf "stat_free(%s);" n1 ] in
+                      [ sprintf "caml_stat_free(%s);" n1 ] in
                   c_code_post_prio := List.rev code2 @ !c_code_post_prio;
              | `Array_size(n_array, ty) ->
                   let code =
@@ -1358,14 +1358,14 @@ let gen_fun c mli ml name args directives free init =
       fprintf c "    long n__stub;\n";
       fprintf c "    %s__c++;\n" n_strbuf_size;
       fprintf c "    n__stub = %s__c;\n" n_strbuf_size;
-      fprintf c "    %s__c = stat_alloc(%s__c+1);\n" n_strbuf n_strbuf_size;
+      fprintf c "    %s__c = caml_stat_alloc(%s__c+1);\n" n_strbuf n_strbuf_size;
       fprintf c "    ";
       emit_call();
       fprintf c "    if (%s == 0) {\n" ret_var;
       fprintf c "      ((char *) %s__c)[n__stub] = 0;\n" n_strbuf;
       fprintf c "      %s = caml_copy_string(%s__c);\n" n_strbuf n_strbuf;
       fprintf c "    };\n";
-      fprintf c "    stat_free(%s__c);\n" n_strbuf;
+      fprintf c "    caml_stat_free(%s__c);\n" n_strbuf;
       fprintf c "  };\n";      
     )
     else (
@@ -1414,7 +1414,7 @@ let gen_fun c mli ml name args directives free init =
 
   if optional then (
     fprintf c "#else\n";
-    fprintf c "  invalid_argument(\"%s\");\n" name;
+    fprintf c "  caml_invalid_argument(\"%s\");\n" name;
     fprintf c "#endif\n";
   );
 
@@ -1483,7 +1483,7 @@ let gen_c_head c =
 
 let gen_c_head2 c =
   fprintf c "static unsigned int uint_val(value v) {\n\
-             \032   if (Int_val(v) < 0) invalid_argument(\"negative integer\");\n\
+             \032   if (Int_val(v) < 0) caml_invalid_argument(\"negative integer\");\n\
              \032   return (unsigned int) Int_val(v);\n\
              }\n\
              \n\

@@ -78,7 +78,7 @@ value xti_cots_connect (value device, value addr) {
 
     if (string_length(addr) > sndcall.addr.maxlen) {
 	t_close(fd);
-	invalid_argument("cots_connect: address too long");
+	caml_invalid_argument("cots_connect: address too long");
     };
 
     sndcall.addr.len = string_length(addr);

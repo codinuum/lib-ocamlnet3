@@ -39,12 +39,12 @@ static void net_nettle_null_pointer(void) {
 static net_nettle_cipher_ctx_t
          net_nettle_create_cipher_ctx(net_nettle_cipher_t cipher) {
     void *p;
-    p = stat_alloc(cipher->context_size);
+    p = caml_stat_alloc(cipher->context_size);
     return p;
 }
 
 static void net_nettle_free(void *ctx) {
-    stat_free(ctx);
+    caml_stat_free(ctx);
 }
 
 static void net_nettle_destroy_cipher(net_nettle_cipher_t cipher) {
@@ -57,7 +57,7 @@ static void net_nettle_set_encrypt_key(net_nettle_cipher_t cipher,
                                        const uint8_t *key) {
 #ifdef HAVE_NETTLE_SET_KEY_WITH_TWO_ARGS
     if (length != cipher->key_size)
-        failwith("net_nettl_set_encrypt_key: key has wrong size");
+        caml_failwith("net_nettl_set_encrypt_key: key has wrong size");
     cipher->set_encrypt_key(ctx, key);
 #else
     cipher->set_encrypt_key(ctx, length, key);
@@ -71,7 +71,7 @@ static void net_nettle_set_decrypt_key(net_nettle_cipher_t cipher,
                                        const uint8_t *key) {
 #ifdef HAVE_NETTLE_SET_KEY_WITH_TWO_ARGS
     if (length != cipher->key_size)
-        failwith("net_nettl_set_decrypt_key: key has wrong size");
+        caml_failwith("net_nettl_set_decrypt_key: key has wrong size");
     cipher->set_decrypt_key(ctx, key);
 #else
     cipher->set_decrypt_key(ctx, length, key);
@@ -292,7 +292,7 @@ static void net_ext_ciphers(net_nettle_cipher_t **ciphers,
 
 static net_nettle_gcm_aes_ctx_t net_nettle_gcm_aes_init(void) {
 #ifdef HAVE_NETTLE_GCM_H
-    return stat_alloc(sizeof(struct gcm_aes_ctx));
+    return caml_stat_alloc(sizeof(struct gcm_aes_ctx));
 #else
     return NULL;
 #endif
@@ -321,7 +321,7 @@ static const char *net_nettle_hash_name(net_nettle_hash_t hash) {
 static net_nettle_hash_ctx_t
          net_nettle_create_hash_ctx(net_nettle_hash_t hash) {
     void *p;
-    p = stat_alloc(hash->context_size);
+    p = caml_stat_alloc(hash->context_size);
     return p;
 }
 

@@ -1,2 +1,0 @@
-#!/bin/sh
-./configure -disable-core -enable-netsys -enable-netstring -enable-pcre -enable-zip

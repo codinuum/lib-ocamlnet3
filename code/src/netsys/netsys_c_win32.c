@@ -626,20 +626,20 @@ static struct pipe_helper * alloc_pipe_helper (HANDLE h, HANDLE cn_ev) {
 	caml_uerror("alloc_pipe_helper/CreateEvent", Nothing);
     };
 
-    rd_ovrlp = stat_alloc(sizeof(OVERLAPPED));
+    rd_ovrlp = caml_stat_alloc(sizeof(OVERLAPPED));
     ZeroMemory(rd_ovrlp, sizeof(OVERLAPPED));
     rd_ovrlp->hEvent = rd_ev;
 
-    wr_ovrlp = stat_alloc(sizeof(OVERLAPPED));
+    wr_ovrlp = caml_stat_alloc(sizeof(OVERLAPPED));
     ZeroMemory(wr_ovrlp, sizeof(OVERLAPPED));
     wr_ovrlp->hEvent = wr_ev;
 
-    cn_ovrlp = stat_alloc(sizeof(OVERLAPPED));
+    cn_ovrlp = caml_stat_alloc(sizeof(OVERLAPPED));
     ZeroMemory(cn_ovrlp, sizeof(OVERLAPPED));
     if (cn_ev != INVALID_HANDLE_VALUE)
 	cn_ovrlp->hEvent = cn_ev;
 
-    ph = stat_alloc(sizeof(struct pipe_helper));
+    ph = caml_stat_alloc(sizeof(struct pipe_helper));
     ph->pipe_handle = h;
     ph->pipe_is_open = 1;
     ph->pipe_is_server = 0;
@@ -680,10 +680,10 @@ static void free_pipe_helper(struct pipe_helper *ph) {
     if (ph->pipe_cn_ev != INVALID_HANDLE_VALUE)
 	CloseHandle(ph->pipe_cn_ev);
     /* do nothing about pipe_signal */
-    stat_free(ph->pipe_rd_ovrlp);
-    stat_free(ph->pipe_wr_ovrlp);
-    stat_free(ph->pipe_cn_ovrlp);
-    stat_free(ph);
+    caml_stat_free(ph->pipe_rd_ovrlp);
+    caml_stat_free(ph->pipe_wr_ovrlp);
+    caml_stat_free(ph->pipe_cn_ovrlp);
+    caml_stat_free(ph);
 }
 
 
@@ -1751,7 +1751,7 @@ CAMLprim value netsys_search_path(value path_opt_v,
     if (pathlen < 256) pathlen = 256;
     cont = 1;
     while (cont) {
-	fullname = stat_alloc(pathlen);
+	fullname = caml_stat_alloc(pathlen);
 	code = SearchPath(path,
 			  file,
 			  ext,
@@ -1760,7 +1760,7 @@ CAMLprim value netsys_search_path(value path_opt_v,
 			  NULL);
 	cont = (code >= pathlen);
 	if (cont) {
-	    stat_free(fullname);
+	    caml_stat_free(fullname);
 	    pathlen = code+1;  /* space for NULL byte! */
 	}
     }
@@ -1768,13 +1768,13 @@ CAMLprim value netsys_search_path(value path_opt_v,
     caml_leave_blocking_section();
 
     if (code == 0) {
-	stat_free(fullname);
+	caml_stat_free(fullname);
 	errno = ENOENT;
 	caml_uerror("netsys_search_path", file_v);
     };
 
     r = caml_copy_string(fullname);
-    stat_free(fullname);
+    caml_stat_free(fullname);
     return r;
 #else
     caml_invalid_argument("netsys_search_path");
@@ -1846,7 +1846,7 @@ CAMLprim value netsys_process_free(value pv) {
 	CloseHandle(p0->proc);
     if (p0->auto_close)
 	CloseHandle(p0->proc_proxy);
-    stat_free(p0);
+    caml_stat_free(p0);
     return Val_unit;
 #else
     caml_invalid_argument("netsys_close_process");

@@ -132,8 +132,8 @@ EOF
 echo "Generating stubs"
 
 rm -f config_checks.sh
-echo "$ ocaml -I ../../tools gssapi.descr" >>$log
-ocaml -I ../../tools gssapi.descr || exit 1
+echo "$ ocaml -I +str -I ../../tools gssapi.descr" >>$log
+ocaml -I +str -I ../../tools gssapi.descr || exit 1
 
 . ./config_checks.sh
 

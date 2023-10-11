@@ -45,7 +45,7 @@ value caml_Tcl_CreateFileHandler(value callback_fn,
     int m, tcl_m;
     CAMLparam3(callback_fn, file_descriptor, mask);
 
-    h = (filehandler *) (stat_alloc(sizeof(filehandler)));
+    h = (filehandler *) (caml_stat_alloc(sizeof(filehandler)));
     /* This must be a malloc'ed data block. */
 
     register_global_root(&(h->callback_fn));
@@ -101,7 +101,7 @@ value caml_Tcl_CreateTimerHandler(value callback_fn,
     timerhandler *h;
     CAMLparam2(callback_fn, milliseconds);
 
-    h = (timerhandler *) (stat_alloc(sizeof(timerhandler)));
+    h = (timerhandler *) (caml_stat_alloc(sizeof(timerhandler)));
     /* This must be a malloc'ed data block. */
 
     register_global_root(&(h->callback_fn));

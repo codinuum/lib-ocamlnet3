@@ -10,6 +10,9 @@ have_gnutls=0
 
 if [ -z "$PKG_CONFIG" ]; then
     PKG_CONFIG="pkg-config"
+    # Workaround issue on OpenBSD
+    export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
+    export PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1
 fi
 
 if [ -z "$GNUTLS_LIBS" ]; then

@@ -883,10 +883,12 @@ object(self)
 	if Netsys_posix.poll_hup_result c.Netsys_posix.poll_act_events then
 	  raise(Fatal_error `Broken_pipe);
  *)
-	let code =
-	  Unix.getsockopt_int fd Unix.SO_ERROR in
+	let error_opt =
+	  Unix.getsockopt_error fd in
 	let error =
-	  Netsys.unix_error_of_code code in
+          match error_opt with
+          | Some e -> e
+          | None -> assert false in
 	let exn_arg =
 	  match error with
 	    | Unix.EPIPE 

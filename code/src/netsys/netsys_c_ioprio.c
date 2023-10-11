@@ -89,7 +89,7 @@ CAMLprim value netsys_ioprio_get(value target) {
 	ioprio = ioprio_get(IOPRIO_WHO_USER, Int_val(Field(target, 0)));
 	break;
     default:
-	failwith("netsys_ioprio_get: internal error");
+	caml_failwith("netsys_ioprio_get: internal error");
     }
 
     if (ioprio == -1)
@@ -114,7 +114,7 @@ CAMLprim value netsys_ioprio_get(value target) {
 	result = Val_long(1);
 	break;
     default:
-	failwith("netsys_ioprio_get: Unexpected result");
+	caml_failwith("netsys_ioprio_get: Unexpected result");
     }
     
     return result;
@@ -145,7 +145,7 @@ CAMLprim value netsys_ioprio_set(value target, value ioprio_arg) {
 	    ioprio_data = Int_val(Field(ioprio_arg, 0));
 	    break;
 	default:
-	    failwith("netsys_ioprio_set: internal error");
+	    caml_failwith("netsys_ioprio_set: internal error");
 	}
     } else {
 	switch (Long_val(ioprio_arg)) {
@@ -159,7 +159,7 @@ CAMLprim value netsys_ioprio_set(value target, value ioprio_arg) {
 	    ioprio_data = 7;
 	    break;
 	default:
-	    failwith("netsys_ioprio_set: internal error");
+	    caml_failwith("netsys_ioprio_set: internal error");
 	}
     };
 
@@ -176,7 +176,7 @@ CAMLprim value netsys_ioprio_set(value target, value ioprio_arg) {
 	sysres = ioprio_set(IOPRIO_WHO_USER, Int_val(Field(target, 0)), ioprio);
 	break;
     default:
-	failwith("netsys_ioprio_set: internal error");
+	caml_failwith("netsys_ioprio_set: internal error");
     }
 
     if (sysres == -1)

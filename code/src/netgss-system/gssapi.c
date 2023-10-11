@@ -59,7 +59,7 @@ static void netgss_free_buffer_contents(long tag, gss_buffer_t buf) {
                 fprintf(stderr, "Netgss: error from gss_release_buffer\n");
         } else {
             if (tag == 1) {
-                stat_free(buf->value);
+                caml_stat_free(buf->value);
             }
         }
     }
@@ -71,13 +71,13 @@ static void netgss_free_buffer_contents(long tag, gss_buffer_t buf) {
 static void netgss_free_buffer(long tag, gss_buffer_t buf) {
     netgss_free_buffer_contents(tag, buf);
     /* The descriptor is always allocated by us: */
-    stat_free(buf);
+    caml_stat_free(buf);
 }
 
 
 static gss_buffer_t netgss_alloc_buffer(void) {
     gss_buffer_t buf;
-    buf = (gss_buffer_t) stat_alloc(sizeof(gss_buffer_desc));
+    buf = (gss_buffer_t) caml_stat_alloc(sizeof(gss_buffer_desc));
     buf->value = NULL;
     buf->length = 0;
     return buf;
@@ -105,10 +105,10 @@ CAMLprim value netgss_buffer_of_string(value s, value pos, value len) {
     gss_buffer_t buf;
     if (Long_val(len) < 0 || Long_val(pos) < 0 ||
         Long_val(pos) > caml_string_length(s) - Long_val(len))
-        invalid_argument("buffer_of_string");
+        caml_invalid_argument("buffer_of_string");
     buf = netgss_alloc_buffer();
     buf->length = Long_val(len);
-    buf->value = stat_alloc(buf->length);
+    buf->value = caml_stat_alloc(buf->length);
     memcpy(buf->value, String_val(s) + Long_val(pos), buf->length);
     return twrap_gss_buffer_t(1, buf);
 }
@@ -155,14 +155,14 @@ static void netgss_free_oid(long tag, gss_OID buf) {
     if (tag == 0 || buf == GSS_C_NO_OID) {
         /* OIDs from the provider are to be considered as read-only */
     } else {
-        stat_free(buf->elements);
-        stat_free(buf);
+        caml_stat_free(buf->elements);
+        caml_stat_free(buf);
     }
 }
 
 
 static gss_OID netgss_alloc_oid(void) {
-    return (gss_OID) stat_alloc(sizeof(gss_OID_desc));
+    return (gss_OID) caml_stat_alloc(sizeof(gss_OID_desc));
 }
 
 
@@ -173,7 +173,7 @@ static gss_OID netgss_copy_oid(gss_OID buf) {
     } else {
         out = netgss_alloc_oid();
         out->length = buf->length;
-        out->elements = stat_alloc(buf->length);
+        out->elements = caml_stat_alloc(buf->length);
         memcpy(out->elements, buf->elements, buf->length);
     }
     return out;
@@ -184,7 +184,7 @@ CAMLprim value netgss_oid_of_string(value s) {
     gss_OID buf;
     buf = netgss_alloc_oid();
     buf->length = caml_string_length(s);
-    buf->elements = stat_alloc(buf->length);
+    buf->elements = caml_stat_alloc(buf->length);
     memcpy(buf->elements, String_val(s), buf->length);
     return twrap_gss_OID(1, buf);
 }
@@ -213,14 +213,14 @@ static void netgss_free_oid_set(long tag, gss_OID_set set) {
         for (k=0; k < set->count; k++) {
             netgss_free_oid(1, set->elements+k);
         }
-        stat_free(set->elements);
-        stat_free(set);
+        caml_stat_free(set->elements);
+        caml_stat_free(set);
     }
 }
 
 
 static gss_OID_set netgss_alloc_oid_set(void) {
-    return (gss_OID_set) stat_alloc(sizeof(gss_OID_set_desc));
+    return (gss_OID_set) caml_stat_alloc(sizeof(gss_OID_set_desc));
 }
 
 
@@ -254,7 +254,7 @@ CAMLprim value netgss_oid_set_of_array(value varg) {
         return twrap_gss_OID_set(1, GSS_C_NO_OID_SET);
     set = netgss_alloc_oid_set();
     set->count = Wosize_val(varg);
-    set->elements = stat_alloc(sizeof(gss_OID) * set->count);
+    set->elements = caml_stat_alloc(sizeof(gss_OID) * set->count);
     for (k=0; k<set->count; k++) {
         v1 = Field(varg, k);
         buf = unwrap_gss_OID(v1);
@@ -308,17 +308,17 @@ CAMLprim value netgss_map_cb(value iaddrty, value iaddr, value aaddrty,
     aaddr_len = caml_string_length(aaddr);
     data_len = caml_string_length(data);
     cb = (gss_channel_bindings_t)
-            stat_alloc(sizeof(struct gss_channel_bindings_struct));
+            caml_stat_alloc(sizeof(struct gss_channel_bindings_struct));
     cb->initiator_addrtype = Int_val(iaddrty);
     cb->initiator_address.length = iaddr_len;
-    cb->initiator_address.value = stat_alloc(iaddr_len);
+    cb->initiator_address.value = caml_stat_alloc(iaddr_len);
     memcpy(cb->initiator_address.value, String_val(iaddr), iaddr_len);
     cb->acceptor_addrtype = Int_val(aaddrty);
     cb->acceptor_address.length = aaddr_len;
-    cb->acceptor_address.value = stat_alloc(aaddr_len);
+    cb->acceptor_address.value = caml_stat_alloc(aaddr_len);
     memcpy(cb->acceptor_address.value, String_val(aaddr), aaddr_len);
     cb->application_data.length = data_len;
-    cb->application_data.value = stat_alloc(data_len);
+    cb->application_data.value = caml_stat_alloc(data_len);
     memcpy(cb->application_data.value, String_val(data), data_len);
     return wrap_gss_channel_bindings_t(cb);
 }
@@ -364,8 +364,8 @@ CAMLprim value netgss_no_oid_set(value dummy) {
 
 static void netgss_free_cb(gss_channel_bindings_t x) {
     if (x != NULL) {
-        stat_free(x->initiator_address.value);
-        stat_free(x->acceptor_address.value);
-        stat_free(x->application_data.value);
+        caml_stat_free(x->initiator_address.value);
+        caml_stat_free(x->acceptor_address.value);
+        caml_stat_free(x->application_data.value);
     }
 }

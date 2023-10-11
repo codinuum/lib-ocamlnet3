@@ -52,8 +52,6 @@ set_defaults () {
     enable_gssapi=0
     enable_pcre=0
     enable_full_pcre=0
-    enable_netsys=0
-    enable_netstring=0
     compat_pcre=0
     enable_nethttpd=0
     bindir=`dirname "$ocamlc"`
@@ -93,11 +91,8 @@ ehelp_pcre="Enable/disable the build against pcre-ocaml"
 ehelp_full_pcre="Enable/disable the build against pcre-ocaml (no Str)"
 ehelp_nethttpd="Enable/disable nethttpd web server component (GPL!)"
 
-ehelp_netsys="Enable/disable Netsys"
-ehelp_netstring="Enable/disable Netstring"
-
 # Which options exist? eoptions for enable/disable
-eoptions="pcre full_pcre gtk gtk2 tcl gnutls gssapi zip apache nethttpd netsys netstring"
+eoptions="pcre full_pcre gtk gtk2 tcl gnutls gssapi zip apache nethttpd"
 
 # Packages to include anyway:
 requires="bytes unix"
@@ -1166,14 +1161,6 @@ if [ $disable_core -gt 0 ]; then
     # Omit the core packages:
     pkglist=""
     with_rpc_xti=0
-fi
-
-if [ $enable_netsys -gt 0 ]; then
-    pkglist="$pkglist netsys"
-fi
-
-if [ $enable_netstring -gt 0 ]; then
-    pkglist="$pkglist netstring"
 fi
 
 for opt in rpc_xti $woptions equeue_tcl equeue_gtk1 equeue_gtk2 netzip; do
