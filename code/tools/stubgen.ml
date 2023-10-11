@@ -983,7 +983,7 @@ let gen_fun c mli ml name args directives free init =
                   let i1 = new_local() in
                   c_decls := sprintf "long %s;" i1 :: !c_decls;
                   let code1 =
-                    [ sprintf "%s = (%s) caml_stat_alloc(Wosize_val(%s)*sizeof(%s));" 
+                    [ sprintf "%s = (%s) caml_stat_alloc(Wosize_val(%s)*sizeof(%s));"
                               n1 c_ty n el_c_ty;
                       sprintf "for (%s=0; %s < Wosize_val(%s); %s++) {"
                               i1 i1 n i1;
